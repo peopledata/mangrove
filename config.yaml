@@ -1,0 +1,28 @@
+app:
+  name: "patronus"
+  mode: "debug"  # debug、test、release
+  port: 8081
+  log_level: "debug"
+  start_time: "2023-02-06"
+  machine_id: 1
+
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: "root"
+  password: "root321"
+  database: "patronus_demo"
+  max_open_conns: 100
+  max_idle_conns: 10
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 100
+
+nft:
+  alchemy_api_key: "a7MgQttaULoI0UHH70c6mbHpevGIdUIc"
+  private_key: "df57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e"
+  goerli_private_key: "ce76af7fc0aca89f3a769b2ebaa236d21faa173361b9103502400116863dc71f"
