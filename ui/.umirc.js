@@ -65,11 +65,6 @@ export default {
       changeOrigin: true,
       // pathRewrite: { '^/api': '/api' },
     },
-    // '/api/v1/weather': {
-    //   target: 'https://api.seniverse.com/',
-    //   changeOrigin: true,
-    //   pathRewrite: { '^/api/v1/weather': '/v3/weather' },
-    // },
   },
   // Theme for antd
   // https://ant.design/docs/react/customize-theme

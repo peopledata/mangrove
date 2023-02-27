@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"patronus/internal/controller/admin"
-	mysql2 "patronus/internal/dao/mysql"
+	"patronus/internal/dao/mysql"
 	"patronus/internal/logger"
 	"patronus/internal/routes"
 	"patronus/pkg/converter"
@@ -22,22 +22,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @title           Swagger Example API
-// @version         1.0
-// @description     This is a sample server celler server.
-// @termsOfService  http://swagger.io/terms/
-
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
-
-// @license.name  Apache 2.0
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host      localhost:8080
-// @BasePath  /api/v1
-
-// @securityDefinitions.basic  BasicAuth
 func main() {
 	//	1. 加载配置
 	if err := settings.Init(); err != nil {
@@ -54,13 +38,13 @@ func main() {
 	zap.L().Debug("logger init success...")
 
 	//	3. 初始化MySQL
-	if err := mysql2.Init(); err != nil {
+	if err := mysql.Init(); err != nil {
 		fmt.Printf("init mysql failed, err: %v\n", err)
 		return
 	}
-	defer mysql2.Close()
+	defer mysql.Close()
 
-	mysql2.AutoMigrate()
+	mysql.AutoMigrate()
 
 	//	4.初始化Redis
 	//if err := redis.Init(); err != nil {
