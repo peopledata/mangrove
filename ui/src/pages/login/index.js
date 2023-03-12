@@ -28,6 +28,7 @@ class Login extends PureComponent {
             <img alt="logo" src={config.logoPath} />
             <span>{config.siteName}</span>
           </div>
+          <h4 className={styles.title}>{t`Platform Title`}</h4>
           <Form onFinish={handleOk}>
             <FormItem name="username" rules={[{ required: true }]} hasFeedback>
               <Input placeholder={t`Username`} />
