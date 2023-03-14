@@ -36,7 +36,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateDemand(dcr *schema.DemandCreateReq) error {
+func CreateDemand(dcr *schema.DemandCreateReq, user *models.User) error {
 	// 2. 生成UID
 	demandId := snowflake.GenID()
 
@@ -44,6 +44,7 @@ func CreateDemand(dcr *schema.DemandCreateReq) error {
 	demand := models.Demand{
 		DemandId:  demandId,
 		Name:      dcr.Name,
+		UserId:    user.ID,
 		Brief:     dcr.Brief,
 		ValidAt:   dcr.ValidAt,
 		Status:    models.DemandStatusInit,

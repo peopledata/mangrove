@@ -100,8 +100,14 @@ func DemandCreateHandler(c *gin.Context) {
 		return
 	}
 
+	user, err := controller.GetCurrentUser(c)
+	if err != nil {
+		zap.L().Error("DemandCreate Handler get current user error", zap.String("name", dcr.Name), zap.Error(err))
+		controller.ResponseErr(c, controller.CodeNeedAuth)
+		return
+	}
 	//	2. 业务处理
-	if err := logic.CreateDemand(&dcr); err != nil {
+	if err := logic.CreateDemand(&dcr, user); err != nil {
 		zap.L().Error("DemandCreate Handler logic handle error", zap.String("name", dcr.Name), zap.Error(err))
 		controller.ResponseErr(c, controller.CodeDemandCreateErr)
 		return

@@ -12,7 +12,7 @@ const CtxEthKey = "ethClient"
 
 var ErrUserNotLogin = errors.New("用户未登录")
 
-func getCurrentUser(c *gin.Context) (*models.User, error) {
+func GetCurrentUser(c *gin.Context) (*models.User, error) {
 	userVal, ok := c.Get(CtxUserKey)
 	if !ok {
 		return nil, ErrUserNotLogin

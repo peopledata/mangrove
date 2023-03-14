@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	controller2 "patronus/internal/controller"
+	"patronus/internal/controller"
 	"patronus/internal/models"
 	"patronus/pkg/jwt"
 	"strings"
@@ -17,26 +17,26 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		// 这里的具体实现方式要依据你的实际业务情况决定
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
-			controller2.ResponseErr(c, controller2.CodeNeedAuth)
+			controller.ResponseErr(c, controller.CodeNeedAuth)
 			c.Abort()
 			return
 		}
 		// 按空格分割
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
-			controller2.ResponseErr(c, controller2.CodeInvalidToken)
+			controller.ResponseErr(c, controller.CodeInvalidToken)
 			c.Abort()
 			return
 		}
 		// parts[1]是获取到的tokenString，我们使用之前定义好的解析JWT的函数来解析它
 		mc, err := jwt.ParseToken(parts[1])
 		if err != nil {
-			controller2.ResponseErr(c, controller2.CodeInvalidToken)
+			controller.ResponseErr(c, controller.CodeInvalidToken)
 			c.Abort()
 			return
 		}
 		// 将当前请求的username信息保存到请求的上下文c上
-		c.Set(controller2.CtxUserKey, &models.User{
+		c.Set(controller.CtxUserKey, &models.User{
 			ID:       mc.ID,
 			UserId:   mc.UserId,
 			Username: mc.Username,
