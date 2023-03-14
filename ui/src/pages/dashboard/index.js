@@ -2,20 +2,11 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'umi'
 import { Row, Col, Card } from 'antd'
-import { Color } from 'utils'
-import { Page, ScrollBar } from 'components'
+import { Page } from 'components'
 import { NumberCard, Sales } from './components'
 import styles from './index.less'
-// import store from 'store'
 
-// const bodyStyle = {
-//   bodyStyle: {
-//     height: 432,
-//     background: '#fff',
-//   },
-// }
-
-@connect(({ app, dashboard, loading }) => ({
+@connect(({ dashboard, loading }) => ({
   dashboard,
   loading,
 }))
@@ -23,18 +14,18 @@ class Dashboard extends PureComponent {
   render() {
     const { dashboard } = this.props
     const { sales, numbers } = dashboard
-    console.log('=====', dashboard)
-    const numberCards = numbers.map((item, key) => (
-      <Col key={key} lg={6} md={12}>
-        <NumberCard {...item} />
-      </Col>
-    ))
+
+    let numberCards = <></>
+    if (numbers) {
+      numberCards = numbers.map((item, key) => (
+        <Col key={key} lg={6} md={12}>
+          <NumberCard {...item} />
+        </Col>
+      ))
+    }
 
     return (
-      <Page
-        // loading={loading.models.dashboard && sales.length === 0}
-        className={styles.dashboard}
-      >
+      <Page className={styles.dashboard}>
         <Row gutter={24}>
           {numberCards}
           <Col lg={24} md={24}>

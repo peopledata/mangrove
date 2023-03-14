@@ -15,20 +15,20 @@ module.exports = {
   ],
 
   /* I18n configuration, `languages` and `defaultLanguage` are required currently. */
-  i18n: {
-    /* Countrys flags: https://www.flaticon.com/packs/countrys-flags */
-    languages: [
-      {
-        key: 'zh',
-        title: '中文',
-        flag: '/china.svg',
-      },
-      {
-        key: 'en',
-        title: 'English',
-        flag: '/america.svg',
-      },
-    ],
-    defaultLanguage: 'zh',
-  },
+  // i18n: {
+  //   /* Countrys flags: https://www.flaticon.com/packs/countrys-flags */
+  //   languages: [
+  //     {
+  //       key: 'zh',
+  //       title: '中文',
+  //       flag: '/china.svg',
+  //     },
+  //     {
+  //       key: 'en',
+  //       title: 'English',
+  //       flag: '/america.svg',
+  //     },
+  //   ],
+  //   defaultLanguage: 'zh',
+  // },
 }

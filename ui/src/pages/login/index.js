@@ -3,9 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'umi'
 import { Button, Row, Input, Form } from 'antd'
 import { GlobalFooter } from 'components'
-import { GithubOutlined } from '@ant-design/icons'
 import { t, Trans } from '@lingui/macro'
-import { setLocale } from 'utils'
 import config from 'utils/config'
 
 import styles from './index.less'
@@ -14,6 +12,10 @@ const FormItem = Form.Item
 
 @connect(({ loading, dispatch }) => ({ loading, dispatch }))
 class Login extends PureComponent {
+  componentDidMount() {
+    console.log('====Login====Login')
+  }
+
   render() {
     const { dispatch, loading } = this.props
 

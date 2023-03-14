@@ -12,7 +12,8 @@ export default {
   state: {},
   // subscriptions: {
   //   setup({ dispatch, history }) {
-  //     history.listen(location => {
+  //     history.listen((location) => {
+  //       console.log(location.pathname)
   //       if (pathToRegexp('/login').exec(location.pathname)) {
   //       }
   //     })
@@ -24,7 +25,6 @@ export default {
       const { locationQuery } = yield select((_) => _.app)
       if (data.success && data.code === CODE_SUCCESS) {
         // save jwt token to store
-        console.log(data, '=======')
         const { access_token, refresh_token } = data.data
         store.set('access_token', access_token)
         store.set('refresh_token', refresh_token)

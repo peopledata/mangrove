@@ -36,6 +36,8 @@ export default modelExtend(pageModel, {
     modalType: 'create',
     drawerOpen: false,
     detailOpen: false,
+    drawerShowDetail: false,
+    showDetailContent: '',
     demandDetail: null,
     selectedRowKeys: [],
   },
@@ -59,11 +61,13 @@ export default modelExtend(pageModel, {
     *query({ payload = {} }, { call, put }) {
       const page = Number(payload.page) || 10
       const pageSize = Number(payload.pageSize) || 10
+      const q = payload.q || ''
       const response = yield call(queryDemandList, {
-        query: `page=${page}&pageSize=${pageSize}`,
+        query: `page=${page}&pageSize=${pageSize}&q=${q}`,
       })
       if (response.data) {
         const { demands, total } = response.data
+        console.log('demands=', demands)
         yield put({
           type: 'querySuccess',
           payload: {
@@ -158,7 +162,6 @@ export default modelExtend(pageModel, {
       if (response.success && response.code === CODE_SUCCESS && response.data) {
         const { tasks, total } = response.data
         yield put({ type: 'updateState', payload: { taskList: tasks } })
-        yield put({ type: 'showDrawer' })
       } else {
         throw response
       }
@@ -227,6 +230,14 @@ export default modelExtend(pageModel, {
 
     hideDetail(state) {
       return { ...state, detailOpen: false }
+    },
+
+    drawerShowDetailOpen(state, { payload }) {
+      return { ...state, ...payload, drawerShowDetail: true }
+    },
+
+    drawerShowDetailClose(state) {
+      return { ...state, drawerShowDetail: false }
     },
   },
 })

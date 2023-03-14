@@ -58,8 +58,8 @@ func CreateDemand(dcr *schema.DemandCreateReq) error {
 	return mysql.InsertDemand(&demand)
 }
 
-func ListDemands() []schema.DemandListResp {
-	demands := mysql.GetAllDemands()
+func ListPagerDemands(q string, page, pageSize int) []schema.DemandListResp {
+	demands := mysql.GetAllPagerDemands(q, page, pageSize)
 	var demandList []schema.DemandListResp
 	for idx := range demands {
 		item := demands[idx]
@@ -141,8 +141,8 @@ func APIGetDemand(demandId int64) (*schema.APIDemandDetailResp, error) {
 	}, nil
 }
 
-func TotalDemands() int64 {
-	return mysql.GetAllDemandsCount()
+func TotalDemands(q string) int64 {
+	return mysql.GetAllDemandsCount(q)
 }
 
 func TotalPublishedDemands() int64 {
@@ -326,13 +326,14 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 	// todo：超过1000个分页
 	url := fmt.Sprintf("https://api-goerli.etherscan.io/api?module=account&action=tokennfttx&contractaddress=%s&page=1&offset=1000&sort=desc&apikey=%s",
 		demand.ContractAddr, etherscanApiKey)
-	fmt.Println(url)
-	resp, err := http.Get(url)
+	httpclient := http.Client{
+		Timeout: time.Second * 10, // 设置超时时间为10s
+	}
+	resp, err := httpclient.Get(url)
 	if err != nil {
 		zap.L().Error("Demand contract records get cron error", zap.String("reason", "request tokennfttx error"),
 			zap.Int64("demand_id", demand.DemandId),
-			zap.String("contract_address", demand.ContractAddr),
-			zap.String("etherscan_url", url), zap.Error(err))
+			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
 		return
 	}
 	defer resp.Body.Close()
@@ -481,184 +482,4 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 			zap.String("contract_address", demand.ContractAddr),
 			zap.String("message", result["message"].(string)))
 	}
-}
-
-// DemandContractRecordsCronWorker 获取签约数据记录
-func DemandContractRecordsCron(client *ethclient.Client, demand *models.Demand, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-	defer cancel()
-
-	// Get a contract instance
-	contractAddr := common.HexToAddress(demand.ContractAddr) // 合约地址
-	instanceApi, err := contracts.NewApi(contractAddr, client)
-	if err != nil {
-		zap.L().Error("Demand contract records get cron error", zap.String("reason", "get eth contract instance error"),
-			zap.Int64("demand_id", demand.DemandId),
-			zap.String("contract_address", demand.ContractAddr),
-			zap.String("contract_tx", demand.ContractTx), zap.Error(err))
-		return
-	}
-
-	// Get the total number of tokens
-	totalTokens, err := instanceApi.TotalSupply(&bind.CallOpts{Context: ctx})
-	if err != nil {
-		zap.L().Error("Demand contract records get cron error", zap.String("reason", "get TotalSupply error"),
-			zap.Int64("demand_id", demand.DemandId),
-			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
-		return
-	}
-
-	zap.L().Debug("get token supply of contract", zap.String("contract", demand.ContractAddr), zap.String("totalTokens", totalTokens.String()))
-
-	// Connect to the IPFS API
-	ipfsClient := ipfsapi.NewShell("localhost:5001")
-	if err != nil {
-		zap.L().Error("Demand contract records get cron error", zap.String("reason", "connect ipfs api error"),
-			zap.Int64("demand_id", demand.DemandId),
-			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
-		return
-	}
-
-	// Loop over all token IDs and retrieve the owner of each token
-	for i := big.NewInt(0); i.Cmp(totalTokens) < 0; {
-		i = i.Add(i, big.NewInt(1))
-
-		// 如果当前 token id 已经处理过存入数据库了，则忽略
-		_, err := mysql.GetContractRecordByTokenId(demand.DemandId, i.Int64())
-		if err != nil {
-			// 如果不是不存在的错误，则记录日志后退出
-			if !errors.Is(err, mysql.ErrContractRecordNotExist) {
-				zap.L().Error("Demand contract records get cron error", zap.String("reason", "mysql.GetContractRecordByTokenId error"),
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("contract_address", demand.ContractAddr),
-					zap.String("tokenId", i.String()), zap.Error(err))
-				continue
-			}
-		} else {
-			// 找到了数据，则不处理了
-			continue
-		}
-
-		// 获取当前 token id 的 owner
-		owner, err := instanceApi.OwnerOf(&bind.CallOpts{Context: ctx}, i)
-		if err != nil {
-			zap.L().Error("Demand contract records get cron error", zap.String("reason", "get OwnerOf error"),
-				zap.Int64("demand_id", demand.DemandId),
-				zap.String("contract_address", demand.ContractAddr),
-				zap.String("tokenId", i.String()), zap.Error(err))
-			continue
-		}
-
-		zap.L().Debug("get owned by tokenId", zap.Int64("demand_id", demand.DemandId),
-			zap.String("tokenId", i.String()), zap.String("owner", owner.String()))
-
-		// 如果owner是当前合约，则表面是用户将nft授权转移给了合约
-		if owner.String() == demand.ContractAddr {
-			assetData, err := instanceApi.TokenURI(&bind.CallOpts{Context: ctx}, i)
-			if err != nil {
-				zap.L().Error("Demand contract records get cron error", zap.String("reason", "get TokenURI error"),
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("contract_address", demand.ContractAddr),
-					zap.String("tokenId", i.String()), zap.Error(err))
-				continue
-			}
-			zap.L().Debug("get asset data by tokenId",
-				zap.Int64("demand_id", demand.DemandId),
-				zap.String("tokenId", i.String()),
-				zap.String("tokenURI", assetData))
-
-			// Parse the IPFS path
-			ipfsPath := path.New(assetData[7:])
-			// read ipfs data
-			data, err := ipfs.Read(ipfsClient, ipfsPath.String())
-			if err != nil {
-				zap.L().Error("Demand contract records get cron error", zap.String("reason", "ipfs client read error"),
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("contract_address", demand.ContractAddr),
-					zap.String("tokenId", i.String()),
-					zap.String("tokenURI", assetData),
-					zap.String("ipfsPath", ipfsPath.String()), zap.Error(err))
-				continue
-			}
-
-			zap.L().Debug("get nft data successfully",
-				zap.Int64("demand_id", demand.DemandId),
-				zap.String("tokenId", i.String()),
-				zap.String("tokenURI", assetData),
-				zap.String("ipfsData", string(data)))
-
-			var nftData schema.NftData
-			if err := json.Unmarshal(data, &nftData); err != nil {
-				zap.L().Error("Demand contract records get cron error", zap.String("reason", "json unmarshal ipfs data error"),
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("contract_address", demand.ContractAddr),
-					zap.String("tokenId", i.String()),
-					zap.String("tokenURI", assetData),
-					zap.String("ipfsPath", ipfsPath.String()), zap.String("ipfsData", string(data)), zap.Error(err))
-				continue
-			}
-
-			// Parse the IPFS path
-			didDocPath := path.New(nftData.DidDoc[7:])
-			// read ipfs data
-			didDocData, err := ipfs.Read(ipfsClient, didDocPath.String())
-			if err != nil {
-				zap.L().Error("Demand contract records get cron error", zap.String("reason", "ipfs read did doc error"),
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("contract_address", demand.ContractAddr),
-					zap.String("tokenId", i.String()),
-					zap.String("tokenURI", assetData),
-					zap.String("didDocPath", didDocPath.String()), zap.Error(err))
-				continue
-			}
-
-			zap.L().Debug("get did doc data successfully",
-				zap.Int64("demand_id", demand.DemandId),
-				zap.String("tokenId", i.String()),
-				zap.String("tokenURI", assetData),
-				zap.String("ipfsData", string(data)), zap.String("didDocPath", didDocPath.String()))
-
-			r := regexp.MustCompile(`"did":"(.*?)"`)
-			match := r.FindStringSubmatch(string(didDocData))
-			if len(match) > 1 {
-				record := models.ContractRecord{
-					DemandId: demand.DemandId,
-					TokenId:  i.Int64(),
-					TokenURI: assetData,
-					DidURI:   nftData.DidDoc,
-					Did:      match[1],
-					//SignTime: time.Now(), // todo：查找正确的签约时间
-				}
-				err := mysql.InsertContractRecord(&record)
-				if err != nil {
-					zap.L().Error("Demand contract records get cron error", zap.String("reason", "insert contract record error"),
-						zap.Int64("demand_id", demand.DemandId),
-						zap.String("contract_address", demand.ContractAddr),
-						zap.String("tokenId", i.String()), zap.String("tokenURI", assetData),
-						zap.String("did", match[1]),
-						zap.String("didDocPath", didDocPath.String()), zap.Error(err))
-					continue
-				}
-				zap.L().Debug("insert contract record data successfully",
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("tokenId", i.String()),
-					zap.String("tokenURI", assetData),
-					zap.String("ipfsData", string(data)),
-					zap.String("did", match[1]),
-					zap.String("didDocPath", didDocPath.String()))
-			} else {
-				zap.L().Debug("get did doc data successfully but no match did data",
-					zap.Int64("demand_id", demand.DemandId),
-					zap.String("tokenId", i.String()),
-					zap.String("tokenURI", assetData),
-					zap.String("ipfsData", string(data)),
-					zap.String("didDocPath", didDocPath.String()))
-			}
-
-		}
-
-	}
-
 }

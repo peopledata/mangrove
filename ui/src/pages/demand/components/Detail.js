@@ -1,14 +1,29 @@
 import React, { PureComponent } from 'react'
-import { Drawer, Row, Col, Tabs, Table, Tag } from 'antd'
+import { Drawer, Row, Col, Tabs, Table, Tag, message } from 'antd'
 import { t, Trans } from '@lingui/macro'
 import PropTypes from 'prop-types'
 import styles from './Detail.less'
 import dayjs from 'dayjs'
-import { getDemandCategoryLabel } from 'utils/constant'
+import { CopyOutlined } from '@ant-design/icons'
+import {
+  getDemandCategoryLabel,
+  getTaskStatusLabel,
+  getTaskStatusColor,
+} from 'utils/constant'
 
 class DemandDetail extends PureComponent {
-  onChange = (key) => {
+  onTabChange = (key) => {
     console.log(key)
+  }
+
+  copyText = (text) => {
+    navigator.clipboard.writeText(text)
+    setTimeout(() => message.info(t`Copy Successfully`), 200)
+  }
+
+  viewDetailHandler = (content) => {
+    const { viewDetailHandler } = this.props
+    viewDetailHandler(content)
   }
 
   renderDemandInfo = () => {
@@ -22,13 +37,13 @@ class DemandDetail extends PureComponent {
         <p className={styles.headerLabel}>{t`Basic Info`}</p>
         <div className={styles.topContent}>
           <Row gutter={24}>
-            <Col span={10}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Demand Name`}：</label>
                 <span>{demandDetail.name}</span>
               </div>
             </Col>
-            <Col span={14}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Demand Valid Time`}：</label>
                 <span>
@@ -39,13 +54,13 @@ class DemandDetail extends PureComponent {
           </Row>
 
           <Row gutter={24}>
-            <Col span={10}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Data Category`}：</label>
                 <span>{getDemandCategoryLabel(demandDetail.category)}</span>
               </div>
             </Col>
-            <Col span={14}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Data Content`}：</label>
                 <span>{demandDetail.content}</span>
@@ -54,13 +69,13 @@ class DemandDetail extends PureComponent {
           </Row>
 
           <Row gutter={24}>
-            <Col span={10}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Needs Users`}：</label>
                 <span>{demandDetail.need_users}</span>
               </div>
             </Col>
-            <Col span={14}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Existing Users`}：</label>
                 <span>{demandDetail.existing_users}</span>
@@ -69,13 +84,13 @@ class DemandDetail extends PureComponent {
           </Row>
 
           <Row gutter={24}>
-            <Col span={10}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Data Available Times`}：</label>
                 <span>{demandDetail.available_times}</span>
               </div>
             </Col>
-            <Col span={14}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Used Times`}：</label>
                 <span>{demandDetail.use_times}</span>
@@ -84,13 +99,13 @@ class DemandDetail extends PureComponent {
           </Row>
 
           <Row gutter={24}>
-            <Col span={10}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Create User`}：</label>
                 <span>xxx</span>
               </div>
             </Col>
-            <Col span={14}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`CreateTime`}：</label>
                 <span>
@@ -101,16 +116,29 @@ class DemandDetail extends PureComponent {
           </Row>
 
           <Row gutter={24}>
-            <Col span={10}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Blockchain ID`}：</label>
                 <span>{demandDetail.contract_symbol}</span>
               </div>
             </Col>
-            <Col span={14}>
+            <Col span={12}>
               <div className={styles.item}>
                 <label>{t`Contract Address`}：</label>
-                <span>{demandDetail.contract_address}</span>
+                {demandDetail.contract_address !== '' ? (
+                  <>
+                    <span>
+                      {demandDetail.contract_address.slice(0, 15)}......
+                    </span>
+                    <CopyOutlined
+                      onClick={() => {
+                        this.copyText(demandDetail.contract_address)
+                      }}
+                    />
+                  </>
+                ) : (
+                  <span>{t`No Data`}</span>
+                )}
               </div>
             </Col>
           </Row>
@@ -119,7 +147,11 @@ class DemandDetail extends PureComponent {
             <Col span={24}>
               <div className={styles.item}>
                 <label>{t`Data Usage`}：</label>
-                <a>{t`View Detail`}</a>
+                <a
+                  onClick={() => {
+                    this.viewDetailHandler(demandDetail.purpose)
+                  }}
+                >{t`View Detail`}</a>
               </div>
             </Col>
           </Row>
@@ -136,7 +168,11 @@ class DemandDetail extends PureComponent {
           </div>
           <div className={styles.item}>
             <label>{t`Agreement Content`}：</label>
-            <a>{t`View Detail`}</a>
+            <a
+              onClick={() => {
+                this.viewDetailHandler(demandDetail.agreement)
+              }}
+            >{t`View Detail`}</a>
           </div>
         </div>
       </div>
@@ -186,6 +222,48 @@ class DemandDetail extends PureComponent {
     )
   }
 
+  renderTasks = () => {
+    const { demand } = this.props
+    const { taskList } = demand
+    const columns = [
+      {
+        title: <Trans>Index</Trans>,
+        dataIndex: 'index',
+        key: 'index',
+        width: '10%',
+        fixed: 'left',
+      },
+      {
+        title: <Trans>Running Time</Trans>,
+        dataIndex: 'created_at',
+        key: 'created_at',
+        render: (text, _) => {
+          return <span>{dayjs(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+        },
+      },
+      {
+        title: <Trans>Running User</Trans>,
+        dataIndex: 'username',
+        key: 'username',
+      },
+      {
+        title: <Trans>Running Status</Trans>,
+        dataIndex: 'status',
+        key: 'status',
+        render: (text, _) => (
+          <Tag color={getTaskStatusColor(text)}>{getTaskStatusLabel(text)}</Tag>
+        ),
+      },
+      {
+        title: <Trans>Operation</Trans>,
+        key: 'operation',
+        fixed: 'right',
+        width: '15%',
+      },
+    ]
+    return <Table columns={columns} simple dataSource={taskList} />
+  }
+
   render() {
     const { onOk, dataSource, ...drawerProps } = this.props
     const items = [
@@ -202,12 +280,12 @@ class DemandDetail extends PureComponent {
       {
         key: '3',
         label: <Trans>Data Operation Record</Trans>,
-        children: `Content of Tab Pane 3`,
+        children: this.renderTasks(),
       },
     ]
     return (
       <Drawer {...drawerProps}>
-        <Tabs defaultActiveKey="1" items={items} onChange={this.onChange} />
+        <Tabs defaultActiveKey="1" items={items} onChange={this.onTabChange} />
       </Drawer>
     )
   }

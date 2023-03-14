@@ -42,6 +42,7 @@ axios.interceptors.response.use(
   function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
+    console.log('onRejected.error=', error)
     return Promise.reject(error)
   }
 )
@@ -68,11 +69,12 @@ export default function request(options) {
     }
 
     // 如果是query参数，则添加进来
-    if (data.query) {
+    if (data && data.query) {
       url += `?${data.query}`
     }
     url = domain + url
   } catch (e) {
+    console.log('request.error=', e)
     message.error(e.message)
   }
 
@@ -105,8 +107,8 @@ export default function request(options) {
       })
     })
     .catch((error) => {
+      console.log(error, '.......')
       const { response, message } = error
-      console.log(response, message, '.......')
       if (String(message) === CANCEL_REQUEST_MESSAGE) {
         return {
           success: false,

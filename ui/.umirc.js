@@ -102,11 +102,6 @@ export default {
                 priority: 30,
                 test: /[\\/]node_modules[\\/]echarts-gl[\\/]/,
               },
-              zrender: {
-                name: 'zrender',
-                priority: 30,
-                test: /[\\/]node_modules[\\/]zrender[\\/]/,
-              },
               echarts: {
                 name: 'echarts',
                 priority: 20,

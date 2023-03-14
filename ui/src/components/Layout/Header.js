@@ -1,16 +1,14 @@
-import React, { PureComponent, Fragment } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Menu, Layout, Avatar, Popover, Badge, List } from 'antd'
-import { Ellipsis } from 'components'
+import { Layout, Space, Avatar, Dropdown, Menu } from 'antd'
 import {
-  BellOutlined,
-  RightOutlined,
+  LogoutOutlined,
+  DownOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons'
 import { Trans } from '@lingui/macro'
 import { getLocale, setLocale } from 'utils'
-import dayjs from 'dayjs'
 import classnames from 'classnames'
 import config from 'config'
 import styles from './Header.less'
@@ -18,38 +16,36 @@ import styles from './Header.less'
 const { SubMenu } = Menu
 
 class Header extends PureComponent {
-  handleClickMenu = (e) => {
-    e.key === 'SignOut' && this.props.onSignOut()
-  }
   render() {
-    const {
-      fixed,
-      avatar,
-      username,
-      collapsed,
-      notifications,
-      onCollapseChange,
-      onAllNotificationsRead,
-    } = this.props
+    const { fixed, avatar, username, collapsed, onCollapseChange, onSignOut } =
+      this.props
+
+    const items = [
+      {
+        label: <Trans>Sign out</Trans>,
+        key: 'logout',
+        icon: <LogoutOutlined />,
+        onClick: function (e) {
+          e.key === 'logout' && onSignOut()
+        },
+      },
+    ]
 
     const rightContent = [
-      <Menu key="user" mode="horizontal" onClick={this.handleClickMenu}>
-        <SubMenu
-          title={
-            <Fragment>
-              <span style={{ color: '#999', marginRight: 4 }}>
-                <Trans>Hi,</Trans>
-              </span>
-              <span>{username}</span>
-              <Avatar style={{ marginLeft: 8 }} src={avatar} />
-            </Fragment>
-          }
-        >
-          <Menu.Item key="SignOut">
-            <Trans>Sign out</Trans>
-          </Menu.Item>
-        </SubMenu>
-      </Menu>,
+      <Dropdown
+        menu={{
+          items,
+        }}
+        trigger={['click']}
+      >
+        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+          <Avatar style={{ marginRight: '5px' }} src={avatar} />
+          <Space>
+            {username}
+            <DownOutlined />
+          </Space>
+        </a>
+      </Dropdown>,
     ]
 
     if (config.i18n) {

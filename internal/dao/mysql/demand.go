@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"patronus/internal/models"
 
 	"gorm.io/gorm"
@@ -10,15 +11,24 @@ func InsertDemand(demand *models.Demand) error {
 	return db.Create(demand).Error
 }
 
-func GetAllDemands() []models.Demand {
+func GetAllPagerDemands(q string, page, pageSize int) []models.Demand {
 	var demands []models.Demand
-	db.Order("created_at DESC").Find(&demands)
+	tx := db.Order("created_at DESC")
+	if q != "" {
+		// %% 表示 % 的转义符
+		tx = tx.Where("name LIKE ?", fmt.Sprintf("%%%s%%", q))
+	}
+	tx.Offset((page - 1) * pageSize).Limit(pageSize).Find(&demands)
 	return demands
 }
 
-func GetAllDemandsCount() int64 {
+func GetAllDemandsCount(q string) int64 {
 	var total int64
-	db.Model(&models.Demand{}).Count(&total)
+	tx := db.Model(&models.Demand{})
+	if q != "" {
+		tx = tx.Where("name LIKE ?", fmt.Sprintf("%%%s%%", q))
+	}
+	tx.Count(&total)
 	return total
 }
 

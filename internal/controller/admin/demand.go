@@ -17,10 +17,15 @@ import (
 )
 
 func DemandListHandler(c *gin.Context) {
-	// todo：分页
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	q := c.DefaultQuery("q", "")
+
 	controller.ResponseOk(c, gin.H{
-		"demands": logic.ListDemands(),
-		"total":   logic.TotalDemands(),
+		"page":     page,
+		"pageSize": pageSize,
+		"demands":  logic.ListPagerDemands(q, page, pageSize),
+		"total":    logic.TotalDemands(q),
 	})
 
 }

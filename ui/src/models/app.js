@@ -36,16 +36,6 @@ export default {
     locationQuery: {},
     theme: store.get('theme') || 'light',
     collapsed: store.get('collapsed') || false,
-    notifications: [
-      {
-        title: 'New User is registered.',
-        date: new Date(Date.now() - 10000000),
-      },
-      {
-        title: 'Application has been approved.',
-        date: new Date(Date.now() - 50000000),
-      },
-    ],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -66,7 +56,6 @@ export default {
     setupRequestCancel({ history }) {
       history.listen(() => {
         const { cancelRequest = new Map() } = window
-
         cancelRequest.forEach((value, key) => {
           if (value.pathname !== window.location.pathname) {
             value.cancel(CANCEL_REQUEST_MESSAGE)
@@ -76,10 +65,12 @@ export default {
       })
     },
   },
+
   effects: {
     *query({ payload }, { call, put, select }) {
       // store isInit to prevent query trigger by refresh
       const isInit = store.get('isInit')
+      console.log('query.isInit=', isInit)
       if (isInit) {
         goDashboard()
         return
@@ -87,6 +78,7 @@ export default {
       const { locationPathname } = yield select((_) => _.app)
       const { success, code, data } = yield call(queryUserInfo, payload)
       const user = data
+      // true 1008 undefined
       if (success && code === CODE_SUCCESS && user) {
         const { data } = yield call(queryRouteList)
         const { permissions } = user
@@ -114,6 +106,7 @@ export default {
         store.set('isInit', true)
         goDashboard()
       } else if (queryLayout(config.layouts, locationPathname) !== 'public') {
+        console.log('====push2login====')
         history.push({
           pathname: '/login',
           search: stringify({
@@ -123,19 +116,23 @@ export default {
       }
     },
 
-    *signOut({ payload }, { call, put }) {
-      const data = yield call(logoutUser)
-      if (data.success) {
-        store.set('routeList', [])
-        store.set('permissions', { visit: [] })
-        store.set('user', {})
-        store.set('isInit', false)
-        yield put({ type: 'query' })
-      } else {
-        throw data
-      }
+    *signOut({ payload }, { call, put, select }) {
+      store.remove('routeList')
+      store.remove('permissions')
+      store.remove('user')
+      store.remove('isInit')
+      store.remove('access_token')
+      store.remove('refresh_token')
+      const { locationPathname } = yield select((_) => _.app)
+      history.push({
+        pathname: '/login',
+        search: stringify({
+          from: locationPathname,
+        }),
+      })
     },
   },
+
   reducers: {
     updateState(state, { payload }) {
       return {
@@ -152,10 +149,6 @@ export default {
     handleCollapseChange(state, { payload }) {
       store.set('collapsed', payload)
       state.collapsed = payload
-    },
-
-    allNotificationsRead(state) {
-      state.notifications = []
     },
   },
 }

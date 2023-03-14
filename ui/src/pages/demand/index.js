@@ -9,6 +9,7 @@ import Filter from './components/Filter'
 import Modal from './components/Modal'
 import Drawer from './components/Drawer'
 import Detail from './components/Detail'
+import ShowDetail from './components/ShowDetail'
 import { t } from '@lingui/macro'
 import { Button, Col, Popconfirm, Row } from 'antd'
 
@@ -31,7 +32,8 @@ class Demand extends PureComponent {
   }
 
   get filterProps() {
-    const { location, dispatch } = this.props
+    const { location, dispatch, demand } = this.props
+    const { list, pagination } = demand
     const { query } = location
 
     return {
@@ -54,7 +56,27 @@ class Demand extends PureComponent {
       onRefresh() {
         dispatch({
           type: 'demand/query',
-          payload: {},
+          payload: {
+            page:
+              list.length === 1 && pagination.current > 1
+                ? pagination.current - 1
+                : pagination.current,
+            pageSize: pagination.pageSize,
+          },
+        })
+      },
+      onSearch(q) {
+        console.log('q=', q)
+        dispatch({
+          type: 'demand/query',
+          payload: {
+            q: q,
+            page:
+              list.length === 1 && pagination.current > 1
+                ? pagination.current - 1
+                : pagination.current,
+            pageSize: pagination.pageSize,
+          },
         })
       },
     }
@@ -124,6 +146,9 @@ class Demand extends PureComponent {
             id: demandId,
           },
         })
+        dispatch({
+          type: 'demand/showDrawer',
+        })
       },
       onDetailItem(demandId) {
         dispatch({
@@ -138,6 +163,12 @@ class Demand extends PureComponent {
             id: demandId,
             page: contractRecordsPager.current,
             pageSize: contractRecordsPager.pageSize,
+          },
+        })
+        dispatch({
+          type: 'demand/queryTask',
+          payload: {
+            id: demandId,
           },
         })
       },
@@ -206,6 +237,28 @@ class Demand extends PureComponent {
     }
   }
 
+  get showDetailProps() {
+    const { dispatch, demand } = this.props
+    const { drawerShowDetail } = demand
+    return {
+      title: t`Demand Detail`,
+      size: 'large',
+      placement: 'right',
+      open: drawerShowDetail,
+      onClose: () => {
+        dispatch({
+          type: 'demand/drawerShowDetailClose',
+        })
+        dispatch({
+          type: 'demand/updateState',
+          payload: {
+            showDetailContent: '',
+          },
+        })
+      },
+    }
+  }
+
   recordsTableChange = (page, demandId) => {
     const { dispatch } = this.props
     dispatch({
@@ -218,9 +271,22 @@ class Demand extends PureComponent {
     })
   }
 
+  viewDetailHandler = (content) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'demand/drawerShowDetailOpen',
+    })
+    dispatch({
+      type: 'demand/updateState',
+      payload: {
+        showDetailContent: content,
+      },
+    })
+  }
+
   render() {
     const { demand } = this.props
-    const { taskList } = demand
+    const { taskList, showDetailContent } = demand
 
     return (
       <Page inner>
@@ -231,8 +297,10 @@ class Demand extends PureComponent {
         <Detail
           {...this.detailProps}
           demand={demand}
+          viewDetailHandler={this.viewDetailHandler}
           recordsTableChange={this.recordsTableChange}
         />
+        <ShowDetail {...this.showDetailProps} content={showDetailContent} />
       </Page>
     )
   }
