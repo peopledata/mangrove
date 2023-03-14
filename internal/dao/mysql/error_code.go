@@ -7,6 +7,7 @@ var (
 	ErrUserNotExist    = errors.New("用户不存在")
 	ErrInvalidPassword = errors.New("密码错误")
 
-	ErrDemandNotExist      = errors.New("需求不存在")
-	ErrDemandStatusNotInit = errors.New("当前需求不是草稿状态，不能进行发布")
+	ErrDemandNotExist         = errors.New("需求不存在")
+	ErrDemandStatusNotInit    = errors.New("当前需求不是草稿状态，不能进行发布")
+	ErrContractRecordNotExist = errors.New("签约记录不存在")
 )

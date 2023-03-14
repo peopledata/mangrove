@@ -68,7 +68,7 @@ class Filter extends Component {
   }
 
   render() {
-    const { onAdd, onRefresh, filter } = this.props
+    const { onAdd, onSearch, onRefresh, filter } = this.props
     const { name, status, category } = filter
 
     let initialCreateTime = []
@@ -91,74 +91,26 @@ class Filter extends Component {
         }}
       >
         <Row gutter={24}>
-          <Col {...ColProps} xl={{ span: 3 }} md={{ span: 12 }}>
-            <Form.Item name="name">
-              <Search
-                placeholder={t`Search Demand Name`}
-                onSearch={this.handleSubmit}
-              />
-            </Form.Item>
-          </Col>
-          <Col
-            {...ColProps}
-            xl={{ span: 3 }}
-            md={{ span: 6 }}
-            id="statusSelect"
-          >
-            <Form.Item name="status">
-              <Select
-                style={{ width: '100%' }}
-                options={DEMAND_STATUS_MAP}
-                placeholder={t`Please pick status`}
-              />
-            </Form.Item>
-          </Col>
-          <Col
-            {...ColProps}
-            xl={{ span: 3 }}
-            md={{ span: 6 }}
-            id="categorySelect"
-          >
-            <Form.Item name="category">
-              <Select
-                style={{ width: '100%' }}
-                options={DEMAND_CATEGORY_MAP}
-                placeholder={t`Please pick category`}
-              />
-            </Form.Item>
-          </Col>
           <Col
             {...TwoColProps}
-            xl={{ span: 15 }}
+            xl={{ span: 24 }}
             md={{ span: 24 }}
             sm={{ span: 24 }}
           >
             <Row type="flex" align="middle" justify="space-between">
-              <div>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="margin-right"
-                  onClick={this.handleSubmit}
-                >
-                  <Trans>Search</Trans>
-                </Button>
-                <Button onClick={this.handleReset}>
-                  <Trans>Reset</Trans>
-                </Button>
+              <div className={styles.search}>
+                <Search
+                  placeholder={t`Search Demand Placeholder`}
+                  allowClear
+                  onSearch={onSearch}
+                  style={{
+                    width: 240,
+                  }}
+                />
               </div>
               <div className={styles.actions}>
-                <Button
-                  type="primary"
-                  ghost
-                  icon={<RedoOutlined />}
-                  onClick={onRefresh}
-                >
-                  <Trans>Refresh</Trans>
-                </Button>
-
-                <Button danger ghost onClick={onAdd}>
-                  <Trans>Create</Trans>
+                <Button type="primary" onClick={onAdd}>
+                  <Trans>Create Demand</Trans>
                 </Button>
               </div>
             </Row>
@@ -171,6 +123,7 @@ class Filter extends Component {
 
 Filter.propTypes = {
   onAdd: PropTypes.func,
+  onSearch: PropTypes.func,
   onRefresh: PropTypes.func,
   filter: PropTypes.object,
   onFilterChange: PropTypes.func,

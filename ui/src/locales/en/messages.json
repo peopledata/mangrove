@@ -45,6 +45,7 @@
   "The input is not valid E-mail!": "The input is not valid E-mail!",
   "The input is not valid phone!": "The input is not valid phone!",
   "Title": "Title",
+  "Search Demand Placeholder": "Please input demand name",
   "Total {total} Items": "Total {total} Items",
   "Unpublished": "Unpublished",
   "Update": "Update",
@@ -95,5 +96,16 @@
   "Running Time": "Running Time",
   "Running User": "Running User",
   "Running Status": "Running Status",
-  "Refresh": "Refresh"
+  "Refresh": "Refresh",
+  "Demand Detail": "Demand Detail",
+  "Demand Info": "Demand Info",
+  "Contracted User": "Contracted User",
+  "Data Operation Record": "Data Operation Record",
+  "Data Category": "Data Category",
+  "Create User": "Create User",
+  "Blockchain ID": "Blockchain ID",
+  "Contract Address": "Contract Address",
+  "View Detail": "View Detail",
+  "User DID": "User DID",
+  "Sign Time": "Sign Time"
 }

@@ -2,17 +2,12 @@ package admin
 
 import (
 	"errors"
-	"fmt"
 	"patronus/internal/controller"
 	"patronus/internal/dao/mysql"
 	"patronus/internal/logic"
 	"patronus/internal/schema"
-	"patronus/pkg/contracts"
 	"patronus/pkg/converter"
 	"strconv"
-	"sync"
-
-	"github.com/spf13/viper"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 
@@ -30,6 +25,7 @@ func DemandListHandler(c *gin.Context) {
 
 }
 
+// DemandDetailHandler 获取详细信息，详情页面展示
 func DemandDetailHandler(c *gin.Context) {
 	// 1. 获取demand id
 	demandIdStr := c.Param("id")
@@ -44,6 +40,33 @@ func DemandDetailHandler(c *gin.Context) {
 	data, err := logic.GetDemandDetail(demandId)
 	if err != nil {
 		zap.L().Error("DemandDetail Handler get detail error", zap.String("id", demandIdStr), zap.Error(err))
+		if errors.Is(err, mysql.ErrDemandNotExist) {
+			controller.ResponseErr(c, controller.CodeDemandNotExist)
+		} else {
+			controller.ResponseErr(c, controller.CodeDemandCreateErr)
+		}
+		return
+	}
+
+	// 3. 返回Response
+	controller.ResponseOk(c, data)
+}
+
+// DemandInfoHandler 获取基本信息，主要用于更新需求的数据回填
+func DemandInfoHandler(c *gin.Context) {
+	// 1. 获取demand id
+	demandIdStr := c.Param("id")
+	demandId, err := strconv.ParseInt(demandIdStr, 10, 64)
+	if err != nil {
+		zap.L().Error("DemandInfo Handler with invalid param", zap.String("id", demandIdStr), zap.Error(err))
+		controller.ResponseErr(c, controller.CodeInvalidParam)
+		return
+	}
+
+	// 2. 业务处理
+	data, err := logic.GetDemandInfo(demandId)
+	if err != nil {
+		zap.L().Error("DemandInfo Handler get detail error", zap.String("id", demandIdStr), zap.Error(err))
 		if errors.Is(err, mysql.ErrDemandNotExist) {
 			controller.ResponseErr(c, controller.CodeDemandNotExist)
 		} else {
@@ -162,29 +185,4 @@ func DemandDeleteHandler(c *gin.Context) {
 	//	ResponseErr(c, CodeInvalidParam)
 	//	return
 	//}
-}
-
-// DemandContractStatusCron 需求发布后合约部署的状态更新定时器
-func DemandContractStatusCron() {
-	// 1. 获取所有发布中的需求（合约）
-	demands := logic.GetAllPublishingDemands()
-	zap.L().Debug("Demand cron job starting", zap.String("publishing", fmt.Sprintf("%d", len(demands))))
-
-	// 2. 根据部署 tx 查询是否部署成功
-	alchemyApiKey := viper.GetString("nft.alchemy_api_key")
-	// http://localhost:8545
-	client, err := contracts.Client(alchemyApiKey)
-	if err != nil {
-		zap.L().Error("Demand contract status check cron error", zap.String("reason", "init ethclient error"), zap.Error(err))
-		return
-	}
-
-	// 使用goroutine去分别执行cron worker
-	var wg sync.WaitGroup
-	for idx := range demands {
-		wg.Add(1)
-		// 执行每个需求的任务
-		go logic.DemandCronWorker(client, &demands[idx], &wg)
-	}
-	wg.Wait()
 }

@@ -8,6 +8,7 @@ import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
 import Drawer from './components/Drawer'
+import Detail from './components/Detail'
 import { t } from '@lingui/macro'
 import { Button, Col, Popconfirm, Row } from 'antd'
 
@@ -61,16 +62,19 @@ class Demand extends PureComponent {
 
   get listProps() {
     const { dispatch, demand, loading } = this.props
-    const { list, pagination, selectedRowKeys } = demand
+    const { list, pagination, contractRecordsPager } = demand
 
     return {
       dataSource: list,
       loading: loading.effects['demand/query'],
       pagination,
       onChange: (page) => {
-        this.handleRefresh({
-          page: page.current,
-          pageSize: page.pageSize,
+        dispatch({
+          type: 'demand/query',
+          payload: {
+            page: page.current,
+            pageSize: page.pageSize,
+          },
         })
       },
       onDeleteItem: (demandId) => {
@@ -78,11 +82,15 @@ class Demand extends PureComponent {
           type: 'demand/delete',
           payload: demandId,
         }).then(() => {
-          this.handleRefresh({
-            page:
-              list.length === 1 && pagination.current > 1
-                ? pagination.current - 1
-                : pagination.current,
+          dispatch({
+            type: 'demand/query',
+            payload: {
+              page:
+                list.length === 1 && pagination.current > 1
+                  ? pagination.current - 1
+                  : pagination.current,
+              pageSize: pagination.pageSize,
+            },
           })
         })
       },
@@ -117,16 +125,21 @@ class Demand extends PureComponent {
           },
         })
       },
-      rowSelection: {
-        selectedRowKeys,
-        onChange: (keys) => {
-          dispatch({
-            type: 'demand/updateState',
-            payload: {
-              selectedRowKeys: keys,
-            },
-          })
-        },
+      onDetailItem(demandId) {
+        dispatch({
+          type: 'demand/queryDetail',
+          payload: {
+            id: demandId,
+          },
+        })
+        dispatch({
+          type: 'demand/queryContractRecords',
+          payload: {
+            id: demandId,
+            page: contractRecordsPager.current,
+            pageSize: contractRecordsPager.pageSize,
+          },
+        })
       },
     }
   }
@@ -177,32 +190,49 @@ class Demand extends PureComponent {
     }
   }
 
+  get detailProps() {
+    const { dispatch, demand } = this.props
+    const { detailOpen } = demand
+    return {
+      title: t`Demand Detail`,
+      size: 'large',
+      placement: 'right',
+      open: detailOpen,
+      onClose: () => {
+        dispatch({
+          type: 'demand/hideDetail',
+        })
+      },
+    }
+  }
+
+  recordsTableChange = (page, demandId) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'demand/queryContractRecords',
+      payload: {
+        id: demandId,
+        page: page.current,
+        pageSize: page.pageSize,
+      },
+    })
+  }
+
   render() {
     const { demand } = this.props
-    const { taskList, selectedRowKeys } = demand
+    const { taskList } = demand
 
     return (
       <Page inner>
         <Filter {...this.filterProps} />
-        {selectedRowKeys.length > 0 && (
-          <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
-            <Col>
-              {t`Selected`} {selectedRowKeys.length} {t`Items`}
-              <Popconfirm
-                title={t`Are you sure delete these items?`}
-                placement="left"
-                onConfirm={this.handleDeleteItems}
-              >
-                <Button type="primary" danger style={{ marginLeft: 8 }}>
-                  {t`Remove`}
-                </Button>
-              </Popconfirm>
-            </Col>
-          </Row>
-        )}
         <List {...this.listProps} />
         <Modal {...this.modalProps} />
         <Drawer {...this.drawerProps} dataSource={taskList} />
+        <Detail
+          {...this.detailProps}
+          demand={demand}
+          recordsTableChange={this.recordsTableChange}
+        />
       </Page>
     )
   }

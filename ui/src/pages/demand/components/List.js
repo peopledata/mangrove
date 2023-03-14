@@ -67,6 +67,11 @@ class List extends PureComponent {
     }
   }
 
+  handlerItemClick = (record, e) => {
+    const { onDetailItem } = this.props
+    onDetailItem(record.demand_id)
+  }
+
   operationOptions = (record) => {
     if (record.status === DEMAND_STATUS.PUBLISHED) {
       return [
@@ -91,7 +96,7 @@ class List extends PureComponent {
   }
 
   render() {
-    const { onDeleteItem, onEditItem, ...tableProps } = this.props
+    const { ...tableProps } = this.props
 
     const columns = [
       {
@@ -101,7 +106,12 @@ class List extends PureComponent {
         width: '10%',
         fixed: 'left',
         render: (text, record) => (
-          <Link to={`demand/${record.demand_id}`}>{text}</Link>
+          <div
+            onClick={(e) => this.handlerItemClick(record, e)}
+            className={styles.name}
+          >
+            {text}
+          </div>
         ),
       },
       {
@@ -184,8 +194,7 @@ class List extends PureComponent {
           showTotal: (total) => t`Total ${total} Items`,
         }}
         className={styles.table}
-        bordered
-        scroll={{ x: 1200 }}
+        // bordered
         columns={columns}
         simple
         rowKey={(record) => record.id}
@@ -197,6 +206,7 @@ class List extends PureComponent {
 List.propTypes = {
   onDeleteItem: PropTypes.func,
   onEditItem: PropTypes.func,
+  onDetailItem: PropTypes.func,
   onPublishItem: PropTypes.func,
   onExecuteItem: PropTypes.func,
   onCloseItem: PropTypes.func,

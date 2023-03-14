@@ -52,6 +52,7 @@ export default function request(options) {
 
   try {
     let domain = ''
+
     const urlMatch = url.match(/[a-zA-z]+:\/\/[^/]*/)
     if (urlMatch) {
       ;[domain] = urlMatch
@@ -60,11 +61,15 @@ export default function request(options) {
 
     const match = parse(url)
     url = compile(url)(data)
-
     for (const item of match) {
       if (item instanceof Object && item.name in cloneData) {
         delete cloneData[item.name]
       }
+    }
+
+    // 如果是query参数，则添加进来
+    if (data.query) {
+      url += `?${data.query}`
     }
     url = domain + url
   } catch (e) {
@@ -91,7 +96,7 @@ export default function request(options) {
       } else {
         result.data = data
       }
-      console.log(result, '&&&&&')
+      // console.log(result, '&&&&&')
       return Promise.resolve({
         success: true,
         message: statusText,

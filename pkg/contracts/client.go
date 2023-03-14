@@ -8,6 +8,9 @@ import (
 
 func Client(alchemyApiKey string) (*ethclient.Client, error) {
 	//alchemyApiKey := viper.GetString("nft.alchemy_api_key")
-	// http://localhost:8545
-	return ethclient.Dial(fmt.Sprintf("https://eth-goerli.g.alchemy.com/v2/%s", alchemyApiKey))
+	//return ethclient.Dial("http://localhost:8545")
+	//https://mainnet.infura.io/v3/9b648f95861e4d719432d38d1aa5d05d
+	//https://goerli.infura.io/v3/9b648f95861e4d719432d38d1aa5d05d
+	return ethclient.Dial(fmt.Sprintf("wss://eth-goerli.g.alchemy.com/v2/%s", alchemyApiKey))
+	//return ethclient.Dial("wss://goerli.infura.io/ws/v3/9b648f95861e4d719432d38d1aa5d05d")
 }

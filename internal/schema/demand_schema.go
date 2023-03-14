@@ -48,8 +48,8 @@ type APIDemandDetailResp struct {
 type DemandContract struct {
 	Address   string `json:"address"`
 	TokenName string `json:"token"`
-	Symbol    string `json:"symbol"`
-	ABI       string `json:"abi"`
+	Symbol    string `json:"symbol,omitempty"`
+	ABI       string `json:"abi,omitempty"`
 }
 
 type DemandCreateReq struct {
@@ -66,6 +66,25 @@ type DemandCreateReq struct {
 }
 
 type DemandDetailResp struct {
+	DemandId        int64     `json:"demand_id"`
+	Name            string    `json:"name"`
+	Brief           string    `json:"brief"`
+	ValidAt         time.Time `json:"valid_at"`
+	CreatedAt       time.Time `json:"created_at"`
+	Category        string    `json:"category"`
+	Content         string    `json:"content"`
+	NeedUsers       int       `json:"need_users"`
+	UseTimes        int       `json:"use_times"`
+	ExistingUsers   int       `json:"existing_users"`
+	AvailableTimes  int       `json:"available_times"`
+	ContractAddress string    `json:"contract_address"`
+	ContractSymbol  string    `json:"contract_symbol"`
+	Purpose         string    `json:"purpose"`
+	Algorithm       string    `json:"algorithm"`
+	Agreement       string    `json:"agreement"`
+}
+
+type DemandInfoResp struct {
 	DemandId  int64     `json:"demand_id"`
 	Name      string    `json:"name"`
 	Brief     string    `json:"brief"`

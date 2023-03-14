@@ -71,7 +71,6 @@ class DemandModal extends PureComponent {
 
   render() {
     const { item = {}, onOk, form, ...modalProps } = this.props
-    console.log(item, '*****', modalProps)
     return (
       <Modal {...modalProps} onOk={this.handleOk}>
         <Form

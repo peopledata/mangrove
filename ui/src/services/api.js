@@ -12,9 +12,9 @@ export default {
   removeUser: 'DELETE /user/:id',
   removeUserList: 'POST /users/delete',
 
-  queryPostList: '/posts',
-
-  queryDemand: '/demand/:id',
+  queryDemandInfo: 'GET /demand/:id/info',
+  queryDemandDetail: 'GET /demand/:id/detail',
+  queryContractRecords: 'GET /demand/:id/contract_record',
   queryDemandList: '/demand',
   createDemand: 'POST /demand',
   updateDemand: 'POST /demand/:id',

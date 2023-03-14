@@ -60,12 +60,13 @@ func main() {
 
 	// 定时器任务
 	c := cron.New()
-	err := c.AddFunc("*/5 * * * *", admin.DemandContractStatusCron)
-	if err != nil {
-		fmt.Printf("add cron task failed, err: %v\n", err)
-		return
-	}
+	c.AddFunc("*/5 * * * *", admin.DemandContractStatusCron)
+	c.AddFunc("*/30 * * * *", admin.DemandContractRecordsCron)
 	c.Start()
+
+	//go func() {
+	//	admin.DemandContractSubscribeWorker(viper.GetString("nft.etherscan_api_key"))
+	//}()
 
 	// 初始化gin框架内置的validator使用的翻译器
 	if err := converter.InitTrans("zh"); err != nil {

@@ -36,8 +36,10 @@ func Setup(mode string) *gin.Engine {
 	adminV1.GET("/user", middleware.JWTAuthMiddleware(), admin.GetUserHandler)
 
 	// 需求管理
-	adminV1.GET("/demand", middleware.JWTAuthMiddleware(), admin.DemandListHandler)                                             // 需求列表
-	adminV1.GET("/demand/:id", middleware.JWTAuthMiddleware(), admin.DemandDetailHandler)                                       // 需求详情
+	adminV1.GET("/demand", middleware.JWTAuthMiddleware(), admin.DemandListHandler)          // 需求列表
+	adminV1.GET("/demand/:id/info", middleware.JWTAuthMiddleware(), admin.DemandInfoHandler) // 基本信息                                   // 需求详情
+	adminV1.GET("/demand/:id/detail", middleware.JWTAuthMiddleware(), admin.DemandDetailHandler)
+	adminV1.GET("/demand/:id/contract_record", middleware.JWTAuthMiddleware(), admin.ContractRecordsHandler)                    // 签约记录                  //
 	adminV1.POST("/demand", middleware.JWTAuthMiddleware(), admin.DemandCreateHandler)                                          // 新建需求
 	adminV1.POST("/demand/:id", middleware.JWTAuthMiddleware(), admin.DemandUpdateHandler)                                      // 更新需求
 	adminV1.POST("/demand/:id/publish", middleware.JWTAuthMiddleware(), middleware.EthMiddleware(), admin.DemandPublishHandler) // 发布需求

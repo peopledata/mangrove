@@ -5,5 +5,5 @@ import (
 )
 
 func AutoMigrate() {
-	db.AutoMigrate(&models.User{}, &models.Demand{}, &models.Task{})
+	db.AutoMigrate(&models.User{}, &models.Demand{}, &models.Task{}, &models.ContractRecord{})
 }

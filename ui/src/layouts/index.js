@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'umi'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, Button } from 'antd'
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { getLocale } from 'utils'
@@ -42,7 +42,25 @@ class Layout extends Component {
     this.loadCatalog(language)
 
     return (
-      <ConfigProvider locale={languages[language]}>
+      <ConfigProvider
+        theme={{
+          components: {
+            Input: {
+              borderRadius: 0,
+            },
+            InputNumber: {
+              borderRadius: 0,
+            },
+            Select: {
+              borderRadius: 0,
+            },
+            DatePicker: {
+              borderRadius: 0,
+            },
+          },
+        }}
+        locale={languages[language]}
+      >
         <I18nProvider i18n={i18n}>
           <BaseLayout>{children}</BaseLayout>
         </I18nProvider>

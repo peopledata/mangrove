@@ -73,6 +73,12 @@ func GetAllDemandsByStatus(status int) []models.Demand {
 	return demands
 }
 
+func GetAllDemandsWithContracts(status int) []models.Demand {
+	var demands []models.Demand
+	db.Where("status=? AND contract_addr != '' AND contract_tx != ''", status).Find(&demands)
+	return demands
+}
+
 func GetAllDemandsByStatusCount(status int) int64 {
 	var total int64
 	db.Model(&models.Demand{}).Where("status=?", status).Count(&total)

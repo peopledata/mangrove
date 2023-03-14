@@ -8,7 +8,9 @@ import { CODE_SUCCESS } from '../../utils/constant'
 const {
   queryDemandList,
   queryTaskList,
-  queryDemand,
+  queryContractRecords,
+  queryDemandInfo,
+  queryDemandDetail,
   createDemand,
   updateDemand,
   publishDemand,
@@ -21,10 +23,20 @@ export default modelExtend(pageModel, {
 
   state: {
     taskList: [],
+    contractRecords: [],
+    contractRecordsPager: {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      current: 1,
+      total: 0,
+      pageSize: 10,
+    },
     currentItem: {},
     modalOpen: false,
     modalType: 'create',
     drawerOpen: false,
+    detailOpen: false,
+    demandDetail: null,
     selectedRowKeys: [],
   },
 
@@ -32,7 +44,8 @@ export default modelExtend(pageModel, {
     setup({ dispatch, history }) {
       history.listen((location) => {
         if (pathToRegexp('/demand').exec(location.pathname)) {
-          const payload = location.query || { page: 1, pageSize: 10 }
+          // const payload = location.query || { page: 1, pageSize: 10 }
+          const payload = { page: 1, pageSize: 10 }
           dispatch({
             type: 'query',
             payload,
@@ -44,23 +57,30 @@ export default modelExtend(pageModel, {
 
   effects: {
     *query({ payload = {} }, { call, put }) {
-      const response = yield call(queryDemandList, payload)
+      const page = Number(payload.page) || 10
+      const pageSize = Number(payload.pageSize) || 10
+      const response = yield call(queryDemandList, {
+        query: `page=${page}&pageSize=${pageSize}`,
+      })
       if (response.data) {
         const { demands, total } = response.data
         yield put({
           type: 'querySuccess',
           payload: {
             list: demands,
-            current: Number(payload.page) || 1,
-            pageSize: Number(payload.pageSize) || 10,
-            total: total,
+            pagination: {
+              current: Number(payload.page) || 1,
+              pageSize: Number(payload.pageSize) || 10,
+              total: total,
+            },
           },
         })
       }
     },
 
+    // 用于编辑更新的回填
     *detail({ payload }, { call, put }) {
-      const response = yield call(queryDemand, payload)
+      const response = yield call(queryDemandInfo, payload)
       if (response.data) {
         const demandDetail = response.data
         // datepicker 需要使用 dayjs 进行格式化
@@ -143,6 +163,45 @@ export default modelExtend(pageModel, {
         throw response
       }
     },
+
+    // 用于显示详情页数据
+    *queryDetail({ payload = {} }, { call, put }) {
+      // 用于编辑更新的回填
+      const response = yield call(queryDemandDetail, payload)
+      if (response.data) {
+        const demandDetail = response.data
+        yield put({
+          type: 'showDetail',
+          payload: {
+            demandDetail: demandDetail,
+          },
+        })
+      }
+    },
+
+    // 查询签约的协议用户
+    *queryContractRecords({ payload = {} }, { call, put }) {
+      const page = Number(payload.page) || 1
+      const pageSize = Number(payload.pageSize) || 10
+      payload['query'] = `page=${page}&pageSize=${pageSize}`
+      const response = yield call(queryContractRecords, payload)
+      if (response.success && response.code === CODE_SUCCESS && response.data) {
+        const { records, total } = response.data
+        yield put({
+          type: 'updateState',
+          payload: {
+            contractRecords: records,
+            contractRecordsPager: {
+              current: Number(payload.page) || 1,
+              pageSize: Number(payload.pageSize) || 10,
+              total: total,
+            },
+          },
+        })
+      } else {
+        throw response
+      }
+    },
   },
 
   reducers: {
@@ -160,6 +219,14 @@ export default modelExtend(pageModel, {
 
     hideDrawer(state) {
       return { ...state, drawerOpen: false }
+    },
+
+    showDetail(state, { payload }) {
+      return { ...state, ...payload, detailOpen: true }
+    },
+
+    hideDetail(state) {
+      return { ...state, detailOpen: false }
     },
   },
 })
