@@ -51,7 +51,7 @@ func main() {
 		return
 	}
 
-	// 定时器任务
+	// TODO：定时器任务，需要拆分出来用K8s的CronJob来执行
 	c := cron.New()
 	c.AddFunc("*/10 * * * *", admin.DemandContractStatusCron)
 	c.AddFunc("* */5 * * *", admin.DemandContractRecordsCron)
