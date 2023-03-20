@@ -26,6 +26,9 @@ func Setup(mode string) *gin.Engine {
 
 	// Serve static files from the "static" directory
 	r.Use(static.Serve("/", static.LocalFile("./ui/dist", true)))
+	r.NoRoute(func(c *gin.Context) {
+		c.FileFromFS("index.html", static.LocalFile("./ui/dist", true))
+	})
 
 	r.GET("/ping", controller.Ping)
 
@@ -59,5 +62,6 @@ func Setup(mode string) *gin.Engine {
 	apiV1.GET("/demand/contract/:category", api.DemandContractListHandler) // 获取某个分类下发布的需求合约列表
 	apiV1.GET("/demand/:id", api.DemandDetailHandler)                      // 获取需求详细信息
 
+	
 	return r
 }
