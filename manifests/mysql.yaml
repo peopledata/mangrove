@@ -23,7 +23,7 @@ spec:
     - metadata:
         name: data
       spec:
-        storageClassName: local-storage
+        storageClassName: cfsauto
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
@@ -48,11 +48,11 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: rootPassW0rd
             - name: MYSQL_DATABASE
-              value: patronus
+              value: mangrove
             - name: MYSQL_USER
-              value: patronus
+              value: mangrove
             - name: MYSQL_PASSWORD
-              value: patronus@Passw0rd
+              value: mangrove@Passw0rd
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql

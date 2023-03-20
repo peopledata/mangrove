@@ -1,0 +1,29 @@
+apiVersion: v1
+data:
+  config.yaml: |
+    app:
+      name: "mangrove"
+      mode: "debug" # debug、test、release
+      port: 8081
+      log_level: "debug"
+      start_time: "2023-02-06"
+      machine_id: 1
+
+    mysql:
+      host: "mysql.kube-did.svc.cluster.local"
+      port: 3306
+      user: "mangrove"
+      password: "mangrove@Passw0rd"
+      database: "mangrove"
+      max_open_conns: 100
+      max_idle_conns: 10
+
+    nft:
+      network: "goerli"
+      infura_api_key: "a62e439c8c1048b6a1f983e5d9a0e72d"
+      goerli_private_key: "ce76af7fc0aca89f3a769b2ebaa236d21faa173361b9103502400116863dc71f"
+      etherscan_api_key: "2VII71ZA9Q56RTWWGGK7F42WVPHHQP2KUG"
+kind: ConfigMap
+metadata:
+  name: mangrove-config
+  namespace: kube-did

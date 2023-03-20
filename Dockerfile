@@ -19,7 +19,7 @@ RUN ls -la
 ENV GOPROXY=https://goproxy.cn,direct
 CMD ["go", "run", "main.go"]
 
-FROM repo-dev.htsc/public-cncp-image-base-local/rhel:8.6
+FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
 EXPOSE 8081
 WORKDIR /src
 COPY --from=build /src/server /src/server
