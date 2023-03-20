@@ -36,9 +36,7 @@ spec:
         - name: harbor-registry
       containers:
         - name: web
-          image: harbor.peopledata.org.cn/htsc/mangrove:v0.0.9
-          args:
-            - /bin/bash && sleep 6000
+          image: harbor.peopledata.org.cn/htsc/mangrove:v0.1.1
           ports:
             - containerPort: 8081
               name: web
@@ -67,8 +65,7 @@ spec:
               memory: 256Mi
           volumeMounts:
             - name: config
-              subPath: config
-              mountPath: /etc/config
+              mountPath: /app/conf
 
 ---
 apiVersion: v1
