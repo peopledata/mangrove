@@ -24,4 +24,5 @@ EXPOSE 8081
 WORKDIR /app
 COPY --from=build /go/src/app/server /app
 COPY --from=build /go/src/app/ui/dist /app/ui/dist
-CMD ["ls", "-la"]
+RUN chmod +x /app/server
+CMD ["./app/server"]

@@ -36,7 +36,7 @@ spec:
         - name: harbor-registry
       containers:
         - name: web
-          image: harbor.peopledata.org.cn/htsc/mangrove:v0.0.5
+          image: harbor.peopledata.org.cn/htsc/mangrove:v0.0.7
           ports:
             - containerPort: 8081
               name: web
