@@ -14,10 +14,11 @@ ENV GOPROXY=https://goproxy.cn,direct
 RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -installsuffix cgo -o server .
 
 FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
-# FROM alpine:latest
 EXPOSE 8081
 WORKDIR /app
 COPY --from=build /go/src/app/server /app
 COPY --from=build /go/src/app/ui/dist /app/ui/dist
-RUN chmod +x /app/server
-CMD ["./app/server"]
+COPY --from=build /go/src/app/start.sh /
+RUN chmod +x /start.sh
+ENTRYPOINT ["/tini", "--"]
+CMD [ "/start.sh" ]
