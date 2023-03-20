@@ -53,8 +53,8 @@ func main() {
 
 	// 定时器任务
 	c := cron.New()
-	c.AddFunc("*/5 * * * *", admin.DemandContractStatusCron)
-	c.AddFunc("*/30 * * * *", admin.DemandContractRecordsCron)
+	c.AddFunc("*/10 * * * *", admin.DemandContractStatusCron)
+	c.AddFunc("* */5 * * *", admin.DemandContractRecordsCron)
 	c.Start()
 
 	// 初始化gin框架内置的validator使用的翻译器
