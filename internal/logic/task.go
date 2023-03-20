@@ -30,7 +30,7 @@ func ListTasks(demandId int64) *schema.TaskListResp {
 		item := tasks[idx]
 		taskList = append(taskList, schema.TaskItemResp{
 			Index:     idx + 1,
-			Username:  item.User.Username,
+			// Username:  item.User.Username,
 			Status:    item.Status,
 			TaskId:    item.TaskId,
 			CreatedAt: item.CreatedAt,
