@@ -20,5 +20,5 @@ COPY --from=build /go/src/app/server /app
 COPY --from=build /go/src/app/ui/dist /app/ui/dist
 COPY --from=build /go/src/app/start.sh /
 RUN chmod +x /start.sh
-ENTRYPOINT ["/tini", "--"]
+# Entrypoint":["tini","--"]
 CMD [ "/start.sh" ]
