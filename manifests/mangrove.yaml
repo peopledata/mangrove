@@ -33,7 +33,7 @@ spec:
           configMap:
             name: mangrove-config
       imagePullSecrets:
-        - harbor-registry
+        - name: harbor-registry
       containers:
         - name: web
           image: harbor.peopledata.org.cn/htsc/mangrove:v0.0.1
