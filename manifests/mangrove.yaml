@@ -32,6 +32,8 @@ spec:
         - name: config
           configMap:
             name: mangrove-config
+      imagePullSecrets:
+        - harbor-registry
       containers:
         - name: web
           image: harbor.peopledata.org.cn/htsc/mangrove:v0.0.1
