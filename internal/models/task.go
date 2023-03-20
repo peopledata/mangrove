@@ -37,7 +37,7 @@ type Task struct {
 	TaskId      int64        `gorm:"task_id;uniqueIndex:idx_task_id;not null"` // 任务ID
 	DemandId    int64        `gorm:"demand_id;index;not null"`                 // 关联的需求ID
 	UserId      uint         `gorm:"user_id;index;not null"`                   // 执行任务的用户ID
-	User        User         `gorm:"foreignKey:UserId"`
+	// User        User         `gorm:"foreignKey:UserId"`
 	Status      int          `gorm:"index"` // 状态（运行中：1、运行成功：2、运行失败：3）
 	Result      JSON         // 执行结果
 	CompletedAt sql.NullTime `gorm:"completed_time"` // 任务完成时间

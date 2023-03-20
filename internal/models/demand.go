@@ -20,7 +20,7 @@ type Demand struct {
 	ID             uint           `gorm:"primaryKey"`
 	DemandId       int64          `gorm:"demand_id;uniqueIndex:idx_demand_id;not null"`
 	UserId         uint           `gorm:"user_id;index;not null"` // 创建需求的用户ID
-	User           User           `gorm:"foreignKey:UserId"`
+	// User           User           `gorm:"foreignKey:UserId"`
 	Name           string         `gorm:"type:varchar(255);not null"` // 需求名称
 	Brief          string         `gorm:"brief;varchar(512)"`         // 简介
 	ValidAt        time.Time      `gorm:"valid_time"`                 // 需求有效期
