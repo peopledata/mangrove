@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM golang:1.18-alpine AS build
-WORKDIR /src
+WORKDIR /go/src/app
 COPY . .
 ENV GOPROXY=https://goproxy.cn,direct
 
@@ -22,8 +22,7 @@ RUN go build -o server .
 
 FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
 EXPOSE 8081
-WORKDIR /src
-COPY --from=build /src/server /src/server
-COPY --from=build /src/config.yaml /src/config.yaml
-COPY --from=build /src/ui /src/ui
-CMD ["/src/server"]
+WORKDIR /root/
+COPY --from=build /go/src/app/server .
+COPY --from=build /go/src/app/ui .
+CMD ["./server"]
