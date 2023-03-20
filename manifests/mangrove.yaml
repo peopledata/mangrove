@@ -98,7 +98,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: mangrove.peopledata.org.cn
+    - host: cluster.peopledata.org.cn
       http:
         paths:
           - backend:
@@ -110,5 +110,5 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - mangrove.peopledata.org.cn
+        - cluster.peopledata.org.cn
       secretName: mangrove-tls
