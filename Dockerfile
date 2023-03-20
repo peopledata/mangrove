@@ -9,17 +9,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 # 安装 gcc 编译器
 RUN apk update && apk add --no-cache \
     gcc musl-dev openssl
-#    && rm -rf /var/cache/apk/* \
-
 ENV GOPROXY=https://goproxy.cn,direct
 RUN go build -o server .
 
-# FROM build AS development
-# RUN ls -la
-# ENV GOPROXY=https://goproxy.cn,direct
-# CMD ["go", "run", "main.go"]
-
-FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
+# FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
+FROM alpine:latest
 EXPOSE 8081
 WORKDIR /app
 COPY --from=build /go/src/app/server /app

@@ -16,9 +16,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ethereum/go-ethereum/core/types"
-
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/robfig/cron"
 	"github.com/spf13/viper"
 
@@ -48,13 +45,6 @@ func main() {
 	defer mysql.Close()
 
 	mysql.AutoMigrate()
-
-	//	4.初始化Redis
-	//if err := redis.Init(); err != nil {
-	//	fmt.Printf("init redis failed, err: %v\n", err)
-	//	return
-	//}
-	//defer redis.Close()
 
 	if err := snowflake.Init(viper.GetString("app.start_time"), viper.GetInt64("app.machine_id")); err != nil {
 		fmt.Printf("init redis failed, err: %v\n", err)
@@ -103,17 +93,6 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		zap.L().Fatal("Server Shutdown", zap.Error(err))
 	}
-
-	zap.L().Info("Server exiting")
+ 	zap.L().Info("Server exiting")
 }
-
-// Returns the sender address from a transaction's data
-func getSenderAddress(tx *types.Transaction) (common.Address, error) {
-	// Parse the transaction data to get the sender address
-	msg, err := tx.AsMessage(types.NewEIP155Signer(tx.ChainId()), nil)
-	if err != nil {
-		return common.Address{}, err
-	}
-
-	return msg.From(), nil
-}
+ 

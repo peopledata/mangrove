@@ -37,6 +37,8 @@ spec:
       containers:
         - name: web
           image: harbor.peopledata.org.cn/htsc/mangrove:v0.0.7
+          args:
+            - ls -la
           ports:
             - containerPort: 8081
               name: web
