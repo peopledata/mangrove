@@ -1,0 +1,19 @@
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+(self["webpackChunkPeopleData_Admin"] = self["webpackChunkPeopleData_Admin"] || []).push([[615],{
+
+/***/ 34615:
+/***/ (function(module) {
+
+"use strict";
+eval("module.exports = JSON.parse('{\"/dashboard\":\"/zh/dashboard\",\"LOADING\":\"加载中...\",\"Add Param\":\"添加参数\",\"Address\":\"地址\",\"Age\":\"年龄\",\"Are you sure delete this record?\":\"您确定要删除这条记录吗?\",\"Author\":\"作者\",\"Avatar\":\"头像\",\"Categories\":\"类别\",\"Clear notifications\":\"清空消息\",\"Comments\":\"评论数\",\"Create\":\"创建\",\"Create User\":\"创建人\",\"CreateTime\":\"创建时间\",\"Dark\":\"暗\",\"Delete\":\"删除\",\"Email\":\"电子邮件\",\"Female\":\"女\",\"Gender\":\"性别\",\"Hi,\":\"你好，\",\"Image\":\"图像\",\"Light\":\"明\",\"Male\":\"男性\",\"Name\":\"名字\",\"NickName\":\"昵称\",\"Not Found\":\"未找到\",\"Operation\":\"操作\",\"Params\":\"参数\",\"Password\":\"请输入密码\",\"Phone\":\"电话\",\"Platform Title\":\"数据需求管理系统\",\"Pick an address\":\"选择地址\",\"Please pick an address\":\"选择地址\",\"Publised\":\"已发布\",\"Publish Date\":\"发布日期\",\"Reset\":\"重置\",\"Search\":\"搜索\",\"Search Name\":\"搜索名字\",\"Send\":\"发送\",\"Sign in\":\"登录\",\"Sign out\":\"退出登录\",\"Switch Theme\":\"切换主题\",\"Tags\":\"标签\",\"The input is not valid E-mail!\":\"输入的电子邮件无效!\",\"The input is not valid phone!\":\"输入无效的手机!\",\"Title\":\"标题\",\"Total {total} Items\":\"总共 {total} 条记录\",\"Search Demand Placeholder\":\"请输入需求名称\",\"Unpublished\":\"未发布\",\"Update\":\"更新\",\"Update User\":\"更新用户\",\"Username\":\"请输入用户名\",\"Views\":\"浏览数\",\"Visibility\":\"可见性\",\"You have viewed all notifications.\":\"您已查看所有通知\",\"Demand Name\":\"需求名称\",\"Status\":\"状态\",\"Category\":\"分类\",\"Needs Users\":\"所需用户\",\"Existing Users\":\"已有用户数\",\"Used Times\":\"已使用次数\",\"Brief\":\"简介\",\"Data Available Times\":\"数据可用次数\",\"ValidTime\":\"需求有效期\",\"Publish\":\"发布\",\"Execute\":\"执行运算\",\"Remove\":\"删除\",\"Close\":\"下架\",\"Record\":\"运算记录\",\"Are you sure delete these demands?\":\"您确定要删除该需求吗？如果已有运行结果数据，将被同步删除。\",\"Are you sure publish this demand?\":\"您确定要发布该需求吗？发布后不可修改。\",\"Are you sure execute data?\":\"您确定要针对已有数据执行运算吗？\",\"Are you sure close this demand?\":\"您确定要下架该需求吗？\",\"Are you sure delete these items?\":\"确定要删除这些内容吗?\",\"Selected_Items\":\"选择 {{length}} 条记录\",\"Selected\":\"选择了\",\"Items\":\" 条记录\",\"Search Demand Name\":\"搜索需求名称\",\"Please pick status\":\"选择状态\",\"Please pick category\":\"选择分类\",\"Create Demand\":\"新增需求\",\"Update Demand\":\"编辑需求\",\"Basic Info\":\"基本信息\",\"Data Category\":\"数据分类\",\"Demand Valid Time\":\"需求有效期\",\"Data Content\":\"数据内容\",\"Data Usage\":\"数据用途\",\"Data Used Times\":\"数据使用次数\",\"Algorithms and protocols\":\"算法和协议\",\"Algorithm file image address\":\"算法文件镜像地址\",\"Agreement Content\":\"协议内容\",\"Select Category\":\"请选择分类\",\"Operation Record\":\"运行记录\",\"Index\":\"序号\",\"Running Time\":\"运行时间\",\"Running User\":\"运行用户\",\"Running Status\":\"运行状态\",\"Refresh\":\"刷新\",\"Demand Detail\":\"需求详情\",\"Demand Info\":\"需求信息\",\"Contracted User\":\"签约用户\",\"Data Operation Record\":\"数据运算记录\",\"Blockchain ID\":\"区块链ID\",\"Contract Address\":\"合约地址\",\"View Detail\":\"查看详情\",\"User DID\":\"用户DID\",\"Sign Time\":\"签订时间\",\"Copy Successfully\":\"已复制\",\"No Data\":\"暂无数据\"}');\n\n//# sourceURL=webpack://PeopleData_Admin/./src/locales/zh/messages.json?");
+
+/***/ })
+
+}]);

@@ -13,7 +13,6 @@ RUN apk update && apk add --no-cache \
 
 ENV GOPROXY=https://goproxy.cn,direct
 RUN go build -o server .
-RUN pwd && ls -la
 
 # FROM build AS development
 # RUN ls -la
@@ -22,8 +21,7 @@ RUN pwd && ls -la
 
 FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
 EXPOSE 8081
-WORKDIR /root/
-COPY --from=build /go/src/app/server .
-COPY --from=build /go/src/app/ui .
-RUN ls -la
-CMD ["./server"]
+WORKDIR /app
+COPY --from=build /go/src/app/server /app
+COPY --from=build /go/src/app/ui/dist /app/ui/dist
+CMD ["ls", "-la"]
