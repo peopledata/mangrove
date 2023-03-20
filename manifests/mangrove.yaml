@@ -65,8 +65,7 @@ spec:
               memory: 256Mi
           volumeMounts:
             - name: config
-              subPath: config
-              mountPath: /src
+              mountPath: /etc/config
 
 ---
 apiVersion: v1

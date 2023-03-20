@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 FROM golang:1.18-alpine AS build
 WORKDIR /go/src/app
 COPY . .
@@ -14,6 +13,7 @@ RUN apk update && apk add --no-cache \
 
 ENV GOPROXY=https://goproxy.cn,direct
 RUN go build -o server .
+RUN pwd && ls -la
 
 # FROM build AS development
 # RUN ls -la
@@ -25,4 +25,5 @@ EXPOSE 8081
 WORKDIR /root/
 COPY --from=build /go/src/app/server .
 COPY --from=build /go/src/app/ui .
+RUN ls -la
 CMD ["./server"]
