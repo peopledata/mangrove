@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM golang:1.18-alpine AS build
-WORKDIR /go/src/github.com/org/repo
+WORKDIR /src
 COPY . .
 ENV GOPROXY=https://goproxy.cn,direct
 
@@ -21,6 +21,8 @@ CMD ["go", "run", "main.go"]
 
 FROM repo-dev.htsc/public-cncp-image-base-local/rhel:8.6
 EXPOSE 8081
-COPY --from=build /go/src/github.com/org/repo/server /server
-COPY --from=build /go/src/github.com/org/repo/config.yaml /config.yaml
+WORKDIR /src
+COPY --from=build /src/server /src/server
+COPY --from=build /src/config.yaml /src/config.yaml
+COPY --from=build /src/ui /src/ui
 CMD ["/server"]

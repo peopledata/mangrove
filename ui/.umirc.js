@@ -14,7 +14,8 @@ const v4Token = convertLegacyToken(mapToken)
 // how to speed compile: https://umijs.org/guide/boost-compile-speed
 export default {
   // IMPORTANT! change next line to yours or delete. And hide in dev
-  publicPath: isDevelopment ? '/' : 'https://cdn.antd-admin.zuiidea.com/',
+  // publicPath: isDevelopment ? '/' : 'https://cdn.antd-admin.zuiidea.com/',
+  publicPath: '/',
   alias: {
     api: resolve(__dirname, './src/services/'),
     components: resolve(__dirname, './src/components'),
@@ -60,11 +61,11 @@ export default {
   mock: false,
   // Webpack Configuration
   proxy: {
-    '/admin': {
-      target: 'http://localhost:8081/',
-      changeOrigin: true,
-      // pathRewrite: { '^/api': '/api' },
-    },
+    // '/admin': {
+    //   target: 'http://localhost:8081/',
+    //   changeOrigin: true,
+    //   // pathRewrite: { '^/api': '/api' },
+    // },
   },
   // Theme for antd
   // https://ant.design/docs/react/customize-theme

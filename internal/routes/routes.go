@@ -8,6 +8,7 @@ import (
 	"patronus/internal/routes/middleware"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,6 +23,9 @@ func Setup(mode string) *gin.Engine {
 	//config.AllowOrigins = []string{"http://google.com"}
 	config.AllowAllOrigins = true
 	r.Use(cors.New(config))
+
+	// Serve static files from the "static" directory
+	r.Use(static.Serve("/", static.LocalFile("./ui/dist", true)))
 
 	r.GET("/ping", controller.Ping)
 
@@ -54,5 +58,6 @@ func Setup(mode string) *gin.Engine {
 	apiV1.GET("/demand", api.DemandListHandler)                            // 获取发布的需求列表
 	apiV1.GET("/demand/contract/:category", api.DemandContractListHandler) // 获取某个分类下发布的需求合约列表
 	apiV1.GET("/demand/:id", api.DemandDetailHandler)                      // 获取需求详细信息
+
 	return r
 }
