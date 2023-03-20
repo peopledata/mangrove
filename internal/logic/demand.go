@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
+	"net/url"
 	"patronus/internal/dao/mysql"
 	"patronus/internal/models"
 	"patronus/internal/schema"
@@ -325,19 +326,42 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 
 	// 查询该NFT的交易历史记录
 	// todo：超过1000个分页
-	url := fmt.Sprintf("https://api-goerli.etherscan.io/api?module=account&action=tokennfttx&contractaddress=%s&page=1&offset=1000&sort=desc&apikey=%s",
+	etherscanApiUrl := fmt.Sprintf("https://api-goerli.etherscan.io/api?module=account&action=tokennfttx&contractaddress=%s&page=1&offset=1000&sort=desc&apikey=%s",
 		demand.ContractAddr, etherscanApiKey)
-	httpclient := http.Client{
-		Timeout: time.Second * 10, // 设置超时时间为10s
-	}
-	resp, err := httpclient.Get(url)
+	proxyUrl, err := url.Parse("http://50.16.249.26:3128")
 	if err != nil {
-		zap.L().Error("Demand contract records get cron error", zap.String("reason", "request tokennfttx error"),
+		zap.L().Error("Demand contract records get cron error", zap.String("reason", "parsing proxy url error"),
 			zap.Int64("demand_id", demand.DemandId),
 			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
 		return
 	}
-	defer resp.Body.Close()
+
+	req, err := http.NewRequest("GET", etherscanApiUrl, nil)
+    if err != nil {
+        zap.L().Error("Demand contract records get cron error", zap.String("reason", "http NewRequest error"),
+			zap.Int64("demand_id", demand.DemandId),
+			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
+		return
+    }
+
+    header := http.Header{}
+    header.Add("Content-Type", "application/json")
+    req.Header = header
+
+    httpclient := http.Client{
+		Timeout: time.Second * 10, // 设置超时时间为10s
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(proxyUrl),
+		},
+	}
+    resp, err := httpclient.Do(req)
+    if err != nil {
+        zap.L().Error("Demand contract records get cron error", zap.String("reason", "request tokennfttx error"),
+			zap.Int64("demand_id", demand.DemandId),
+			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
+		return
+    }
+    defer resp.Body.Close()
 
 	var result map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&result)

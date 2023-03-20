@@ -42,9 +42,9 @@ func DemandContractStatusCron() {
 	zap.L().Debug("Demand cron job starting", zap.String("publishing", fmt.Sprintf("%d", len(demands))))
 
 	// 2. 根据部署 tx 查询是否部署成功
-	alchemyApiKey := viper.GetString("nft.alchemy_api_key")
-	// http://localhost:8545
-	client, err := contracts.Client(alchemyApiKey)
+	network := viper.GetString("nft.network")
+	apiKey := viper.GetString("nft.infura_api_key")
+	client, err := contracts.Client(network, apiKey)
 	if err != nil {
 		zap.L().Error("Demand contract status check cron error", zap.String("reason", "init ethclient error"), zap.Error(err))
 		return
@@ -67,9 +67,9 @@ func DemandContractRecordsCron() {
 	zap.L().Debug("Demand contract records cron job starting", zap.String("published", fmt.Sprintf("%d", len(demands))))
 
 	// 2. 根据部署 tx 查询是否部署成功
-	alchemyApiKey := viper.GetString("nft.alchemy_api_key")
-	// http://localhost:8545
-	client, err := contracts.Client(alchemyApiKey)
+	network := viper.GetString("nft.network")
+	apiKey := viper.GetString("nft.infura_api_key")
+	client, err := contracts.Client(network, apiKey)
 	if err != nil {
 		zap.L().Error("Demand contract records cron error", zap.String("reason", "init ethclient error"), zap.Error(err))
 		return

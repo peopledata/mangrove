@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: kube-did
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: dbport
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: kube-did
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: local-storage
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          imagePullPolicy: IfNotPresent
+          args: # 新版本镜像有更新，需要使用下面的认证插件环境变量配置才会生效
+            - --default_authentication_plugin=mysql_native_password
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+          ports:
+            - containerPort: 3306
+              name: dbport
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: rootPassW0rd
+            - name: MYSQL_DATABASE
+              value: patronus
+            - name: MYSQL_USER
+              value: patronus
+            - name: MYSQL_PASSWORD
+              value: patronus@Passw0rd
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql

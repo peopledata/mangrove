@@ -10,23 +10,23 @@
 
 ## 项目依赖
 
-* 一个 MySQL 数据库
-* 一个能够连接以太坊测试网络 goerli 的钱包
-* 还需要能够访问以太坊 RPC 地址（我们使用的是 alchemy 服务）
+- 一个 MySQL 数据库
+- 一个能够连接以太坊测试网络 goerli 的钱包
+- 还需要能够访问以太坊 RPC 地址（我们使用的是 alchemy 服务）
 
 ## 配置文件
 
 ```yaml
 app:
   name: "patronus"
-  mode: "debug"  # debug、test、release
+  mode: "debug" # debug、test、release
   port: 8081
   log_level: "debug"
   start_time: "2023-02-06"
   machine_id: 1
 
 mysql:
-  host: "127.0.0.1"  
+  host: "127.0.0.1"
   port: 3306
   user: "root"
   password: "root321"
@@ -35,12 +35,14 @@ mysql:
   max_idle_conns: 10
 
 nft:
-  alchemy_api_key: "a7MgQttaULoI0UHH70c6mbHpevGIdUIc"
+  network: "goerli"
+  infura_api_key: "a62e439c8c1048b6a1f983e5d9a0e72d"
   goerli_private_key: "ce76af7fc0aca89f3a769b2ebaa236d21faa173361b9103502400116863dc71f"
+  etherscan_api_key: "2VII71ZA9Q56RTWWGGK7F42WVPHHQP2KUG"
 ```
 
-* 其中 app.mode 表示运行模式，可选值为：debug、test、release
-* mysql 下面是数据库相关的配置
-* nft 下面包括两个key，alchemy_api_key 需要到 alchemy 网站注册获取key，goerli_private_key 是用于部署合约的钱包私钥账号
+- 其中 app.mode 表示运行模式，可选值为：debug、test、release
+- mysql 下面是数据库相关的配置
+- nft 下面包括两个 key，infura_api_key 需要到 infura.io 网站注册获取 key，goerli_private_key 是用于部署合约的钱包私钥账号
 
 `ui` 目录下面是前端项目。

@@ -16,6 +16,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/ethereum/go-ethereum/core/types"
+
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/robfig/cron"
 	"github.com/spf13/viper"
 
@@ -64,10 +67,6 @@ func main() {
 	c.AddFunc("*/30 * * * *", admin.DemandContractRecordsCron)
 	c.Start()
 
-	//go func() {
-	//	admin.DemandContractSubscribeWorker(viper.GetString("nft.etherscan_api_key"))
-	//}()
-
 	// 初始化gin框架内置的validator使用的翻译器
 	if err := converter.InitTrans("zh"); err != nil {
 		fmt.Printf("init gin validator translate, err: %v\n", err)
@@ -106,4 +105,15 @@ func main() {
 	}
 
 	zap.L().Info("Server exiting")
+}
+
+// Returns the sender address from a transaction's data
+func getSenderAddress(tx *types.Transaction) (common.Address, error) {
+	// Parse the transaction data to get the sender address
+	msg, err := tx.AsMessage(types.NewEIP155Signer(tx.ChainId()), nil)
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	return msg.From(), nil
 }

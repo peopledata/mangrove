@@ -11,9 +11,9 @@ import (
 
 func EthMiddleware() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		alchemyApiKey := viper.GetString("nft.alchemy_api_key")
-		// http://localhost:8545
-		client, err := contracts.Client(alchemyApiKey)
+		network := viper.GetString("nft.network")
+		apiKey := viper.GetString("nft.infura_api_key")
+		client, err := contracts.Client(network, apiKey)
 		if err != nil {
 			controller2.ResponseErr(c, controller2.CodeInvalidEthClient)
 			c.Abort()
