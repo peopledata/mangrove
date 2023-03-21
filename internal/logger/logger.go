@@ -52,15 +52,21 @@ func GinLogger() gin.HandlerFunc {
 		query := c.Request.URL.RawQuery
 		c.Next()
 		cost := time.Since(start)
-		zap.L().Info(path,
-			zap.Int("status", c.Writer.Status()),
+		fields := []zapcore.Field{}
+		fields = append(fields, 
+			zap.Int("status", c.Writer.Status()), 
 			zap.String("method", c.Request.Method),
 			zap.String("path", path),
 			zap.String("query", query),
 			zap.String("ip", c.ClientIP()),
 			zap.String("user-agent", c.Request.UserAgent()),
-			zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
-			zap.Duration("cost", cost),
+			zap.Duration("cost", cost))
+		errField := c.Errors.ByType(gin.ErrorTypePrivate).String()
+		if errField != "" {
+			fields = append(fields, zap.String("errors", errField))
+		}
+		zap.L().Info(path,
+			fields...,
 		)
 	}
 }

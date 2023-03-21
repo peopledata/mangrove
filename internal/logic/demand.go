@@ -316,7 +316,7 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 	}
 
 	// 连接IPFS API的客户端
-	ipfsClient := ipfsapi.NewShell("localhost:5001")
+	ipfsClient := ipfsapi.NewShell("ipfs.peopledata.org.cn:5002")
 	if err != nil {
 		zap.L().Error("Demand contract records get cron error", zap.String("reason", "connect ipfs api error"),
 			zap.Int64("demand_id", demand.DemandId),

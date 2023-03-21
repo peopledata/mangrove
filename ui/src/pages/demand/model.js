@@ -67,7 +67,6 @@ export default modelExtend(pageModel, {
       })
       if (response.data) {
         const { demands, total } = response.data
-        console.log('demands=', demands)
         yield put({
           type: 'querySuccess',
           payload: {
