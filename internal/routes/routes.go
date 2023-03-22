@@ -1,11 +1,11 @@
 package routes
 
 import (
-	"patronus/internal/controller"
-	"patronus/internal/controller/admin"
-	"patronus/internal/controller/api"
-	"patronus/internal/logger"
-	"patronus/internal/routes/middleware"
+	"mangrove/internal/controller"
+	"mangrove/internal/controller/admin"
+	"mangrove/internal/controller/api"
+	"mangrove/internal/logger"
+	"mangrove/internal/routes/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
@@ -62,6 +62,5 @@ func Setup(mode string) *gin.Engine {
 	apiV1.GET("/demand/contract/:category", api.DemandContractListHandler) // 获取某个分类下发布的需求合约列表
 	apiV1.GET("/demand/:id", api.DemandDetailHandler)                      // 获取需求详细信息
 
-	
 	return r
 }

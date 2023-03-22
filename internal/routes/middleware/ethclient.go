@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	controller2 "patronus/internal/controller"
-	"patronus/pkg/contracts"
+	controller2 "mangrove/internal/controller"
+	"mangrove/pkg/contracts"
 
 	"github.com/spf13/viper"
 

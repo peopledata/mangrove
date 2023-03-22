@@ -2,9 +2,9 @@ package api
 
 import (
 	"errors"
-	"patronus/internal/controller"
-	"patronus/internal/dao/mysql"
-	"patronus/internal/logic"
+	"mangrove/internal/controller"
+	"mangrove/internal/dao/mysql"
+	"mangrove/internal/logic"
 	"strconv"
 
 	"go.uber.org/zap"

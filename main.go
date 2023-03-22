@@ -3,16 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"mangrove/internal/controller/admin"
+	"mangrove/internal/dao/mysql"
+	"mangrove/internal/logger"
+	"mangrove/internal/routes"
+	"mangrove/pkg/converter"
+	"mangrove/pkg/snowflake"
+	"mangrove/settings"
 	"net/http"
 	"os"
 	"os/signal"
-	"patronus/internal/controller/admin"
-	"patronus/internal/dao/mysql"
-	"patronus/internal/logger"
-	"patronus/internal/routes"
-	"patronus/pkg/converter"
-	"patronus/pkg/snowflake"
-	"patronus/settings"
 	"syscall"
 	"time"
 
@@ -53,10 +53,10 @@ func main() {
 
 	// TODO：定时器任务，需要拆分出来用K8s的CronJob来执行
 	c := cron.New()
-	// 每隔20s检查一次合约状态
-	c.AddFunc("*/15 * * * * *", admin.DemandContractStatusCron)
-	// 每隔
-	c.AddFunc("* */5 * * * *", admin.DemandContractRecordsCron)
+	// 每隔15s检查一次合约状态
+	c.AddFunc("*/15 * * * *", admin.DemandContractStatusCron)
+	// 每隔5分钟
+	c.AddFunc("0 */5 * * *", admin.DemandContractRecordsCron)
 	c.Start()
 
 	// 初始化gin框架内置的validator使用的翻译器
@@ -95,6 +95,5 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		zap.L().Fatal("Server Shutdown", zap.Error(err))
 	}
- 	zap.L().Info("Server exiting")
+	zap.L().Info("Server exiting")
 }
- 

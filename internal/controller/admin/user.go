@@ -2,13 +2,13 @@ package admin
 
 import (
 	"errors"
-	"patronus/internal/controller"
-	"patronus/internal/dao/mysql"
-	"patronus/internal/logic"
-	"patronus/internal/models"
-	"patronus/internal/schema"
-	"patronus/pkg/converter"
-	"patronus/pkg/jwt"
+	"mangrove/internal/controller"
+	"mangrove/internal/dao/mysql"
+	"mangrove/internal/logic"
+	"mangrove/internal/models"
+	"mangrove/internal/schema"
+	"mangrove/pkg/converter"
+	"mangrove/pkg/jwt"
 
 	"github.com/go-playground/validator/v10"
 

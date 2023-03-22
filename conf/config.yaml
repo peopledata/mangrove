@@ -15,16 +15,13 @@ mysql:
   max_open_conns: 100
   max_idle_conns: 10
 
-# redis:
-#   host: "127.0.0.1"
-#   port: 6379
-#   password: ""
-#   db: 0
-#   pool_size: 100
-
 nft:
   network: "goerli"
   infura_api_key: "a62e439c8c1048b6a1f983e5d9a0e72d"
   # alchemy_api_key: "a7MgQttaULoI0UHH70c6mbHpevGIdUIc"
   goerli_private_key: "ce76af7fc0aca89f3a769b2ebaa236d21faa173361b9103502400116863dc71f"
   etherscan_api_key: "2VII71ZA9Q56RTWWGGK7F42WVPHHQP2KUG"
+
+marketplace:
+  host: "http://localhost:8082"
+  api_key: "sk-ufehHgNrwbHpEKD"

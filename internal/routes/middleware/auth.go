@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"patronus/internal/controller"
-	"patronus/internal/models"
-	"patronus/pkg/jwt"
+	"mangrove/internal/controller"
+	"mangrove/internal/models"
+	"mangrove/pkg/jwt"
 	"strings"
 
 	"github.com/gin-gonic/gin"

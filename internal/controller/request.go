@@ -2,7 +2,7 @@ package controller
 
 import (
 	"errors"
-	"patronus/internal/models"
+	"mangrove/internal/models"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	"patronus/internal/models"
+	"mangrove/internal/models"
 )
 
 func AutoMigrate() {

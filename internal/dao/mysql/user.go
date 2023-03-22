@@ -3,7 +3,7 @@ package mysql
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"patronus/internal/models"
+	"mangrove/internal/models"
 
 	"gorm.io/gorm"
 )

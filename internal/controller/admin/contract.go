@@ -2,9 +2,9 @@ package admin
 
 import (
 	"fmt"
-	"patronus/internal/controller"
-	"patronus/internal/logic"
-	"patronus/pkg/contracts"
+	"mangrove/internal/controller"
+	"mangrove/internal/logic"
+	"mangrove/pkg/contracts"
 	"strconv"
 	"sync"
 

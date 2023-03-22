@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"patronus/internal/controller"
-	"patronus/internal/schema"
+	"mangrove/internal/controller"
+	"mangrove/internal/schema"
 
 	"github.com/gin-gonic/gin"
 )

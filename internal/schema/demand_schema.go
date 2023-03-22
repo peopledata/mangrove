@@ -61,7 +61,7 @@ type DemandCreateReq struct {
 	NeedUsers int       `json:"need_users" binding:"required,gt=0"`
 	UseTimes  int       `json:"use_times" binding:"required,gt=0"`
 	Purpose   string    `json:"purpose" binding:"required"`
-	Algorithm string    `json:"algorithm" binding:"required,url"`
+	Algorithm string    `json:"algorithm" binding:"required"`
 	Agreement string    `json:"agreement" binding:"required"`
 }
 

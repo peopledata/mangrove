@@ -2,12 +2,14 @@ package admin
 
 import (
 	"errors"
-	"patronus/internal/controller"
-	"patronus/internal/dao/mysql"
-	"patronus/internal/logic"
-	"patronus/internal/schema"
-	"patronus/pkg/converter"
+	"mangrove/internal/controller"
+	"mangrove/internal/dao/mysql"
+	"mangrove/internal/logic"
+	"mangrove/internal/schema"
+	"mangrove/pkg/converter"
 	"strconv"
+
+	"github.com/spf13/viper"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 
@@ -174,7 +176,9 @@ func DemandPublishHandler(c *gin.Context) {
 	ethClient := val.(*ethclient.Client)
 
 	// 3. 执行发布逻辑
-	if err := logic.PublishDemand(demandId, ethClient); err != nil {
+	marketPlaceHost := viper.GetString("marketplace.host")
+	marketPlaceApiKey := viper.GetString("marketplace.api_key")
+	if err := logic.PublishDemand(demandId, marketPlaceHost, marketPlaceApiKey, ethClient); err != nil {
 		zap.L().Error("DemandPublish Handler logic handle error", zap.String("demand_id", demandIdStr), zap.Error(err))
 		if errors.Is(err, mysql.ErrDemandStatusNotInit) {
 			controller.ResponseErr(c, controller.CodeDemandStatusNotInit)

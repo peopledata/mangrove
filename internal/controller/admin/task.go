@@ -1,9 +1,9 @@
 package admin
 
 import (
-	controller "patronus/internal/controller"
-	"patronus/internal/logic"
-	"patronus/internal/models"
+	controller "mangrove/internal/controller"
+	"mangrove/internal/logic"
+	"mangrove/internal/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

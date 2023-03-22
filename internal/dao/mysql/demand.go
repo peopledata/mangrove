@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"patronus/internal/models"
+	"mangrove/internal/models"
 
 	"gorm.io/gorm"
 )

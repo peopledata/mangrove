@@ -1,19 +1,21 @@
 package logic
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"mangrove/internal/dao/mysql"
+	"mangrove/internal/models"
+	"mangrove/internal/schema"
+	"mangrove/pkg/contracts"
+	"mangrove/pkg/ipfs"
+	"mangrove/pkg/snowflake"
 	"math/big"
 	"net/http"
 	"net/url"
-	"patronus/internal/dao/mysql"
-	"patronus/internal/models"
-	"patronus/internal/schema"
-	"patronus/pkg/contracts"
-	"patronus/pkg/ipfs"
-	"patronus/pkg/snowflake"
 	"regexp"
 	"strconv"
 	"strings"
@@ -213,7 +215,7 @@ func UpdateDemand(dur *schema.DemandUpdateReq) error {
 	return mysql.UpdateDemand(&demand)
 }
 
-func PublishDemand(demandId int64, client *ethclient.Client) error {
+func PublishDemand(demandId int64, apiHost, apiKey string, client *ethclient.Client) error {
 	// 1. 检查当前状态是否为草稿状态，草稿状态才可以发布
 	if err := mysql.CheckDemandInitStatus(demandId); err != nil {
 		return err
@@ -246,11 +248,63 @@ func PublishDemand(demandId int64, client *ethclient.Client) error {
 
 	select {
 	case <-done:
+		// 3. 提交到marketplace去
+		if err := PushDemandToMarketplace(demandId, apiHost, apiKey); err != nil {
+			zap.L().Error("push demand to marketplace error", zap.Error(err))
+		}
 		return nil
 	case err := <-result:
 		zap.L().Error("deploy contract error", zap.Error(err))
 		return err
 	}
+}
+
+// PushDemandToMarketplace 将需求数据推送到Marketplace去
+func PushDemandToMarketplace(demandId int64, apiHost, apiKey string) error {
+	demand, err := mysql.GetDemandDetail(demandId)
+	if err != nil {
+		return err
+	}
+	demand.ContractABI = contracts.ApiMetaData.ABI
+	jsonData, err := json.Marshal(demand)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/demands", apiHost), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+	header := http.Header{}
+	header.Add("Content-Type", "application/json")
+	header.Add("X-API-KEY", apiKey)
+	req.Header = header
+	httpclient := http.Client{
+		Timeout: time.Second * 10, // 设置超时时间为10s
+	}
+	resp, err := httpclient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	type RespData struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	var rd RespData
+	if err := json.Unmarshal(body, &rd); err != nil {
+		return err
+	}
+	if rd.Code == 1000 {
+		return nil
+	}
+	return errors.New(rd.Msg)
 }
 
 func GetAllPublishingDemands() []models.Demand {
@@ -337,31 +391,31 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 	}
 
 	req, err := http.NewRequest("GET", etherscanApiUrl, nil)
-    if err != nil {
-        zap.L().Error("Demand contract records get cron error", zap.String("reason", "http NewRequest error"),
+	if err != nil {
+		zap.L().Error("Demand contract records get cron error", zap.String("reason", "http NewRequest error"),
 			zap.Int64("demand_id", demand.DemandId),
 			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
 		return
-    }
+	}
 
-    header := http.Header{}
-    header.Add("Content-Type", "application/json")
-    req.Header = header
+	header := http.Header{}
+	header.Add("Content-Type", "application/json")
+	req.Header = header
 
-    httpclient := http.Client{
+	httpclient := http.Client{
 		Timeout: time.Second * 10, // 设置超时时间为10s
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(proxyUrl),
 		},
 	}
-    resp, err := httpclient.Do(req)
-    if err != nil {
-        zap.L().Error("Demand contract records get cron error", zap.String("reason", "request tokennfttx error"),
+	resp, err := httpclient.Do(req)
+	if err != nil {
+		zap.L().Error("Demand contract records get cron error", zap.String("reason", "request tokennfttx error"),
 			zap.Int64("demand_id", demand.DemandId),
 			zap.String("contract_address", demand.ContractAddr), zap.Error(err))
 		return
-    }
-    defer resp.Body.Close()
+	}
+	defer resp.Body.Close()
 
 	var result map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&result)

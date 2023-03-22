@@ -1,11 +1,11 @@
 package logic
 
 import (
-	"patronus/internal/dao/mysql"
-	"patronus/internal/models"
-	"patronus/internal/schema"
-	"patronus/pkg/jwt"
-	"patronus/pkg/snowflake"
+	"mangrove/internal/dao/mysql"
+	"mangrove/internal/models"
+	"mangrove/internal/schema"
+	"mangrove/pkg/jwt"
+	"mangrove/pkg/snowflake"
 )
 
 func SignUp(sp *schema.SignUpReq) error {
