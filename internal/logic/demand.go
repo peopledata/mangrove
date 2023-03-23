@@ -248,10 +248,6 @@ func PublishDemand(demandId int64, apiHost, apiKey string, client *ethclient.Cli
 
 	select {
 	case <-done:
-		// 3. 提交到marketplace去
-		if err := PushDemandToMarketplace(demandId, apiHost, apiKey); err != nil {
-			zap.L().Error("push demand to marketplace error", zap.Error(err))
-		}
 		return nil
 	case err := <-result:
 		zap.L().Error("deploy contract error", zap.Error(err))
@@ -317,7 +313,7 @@ func GetAllPublishedDemands() []models.Demand {
 }
 
 // DemandStatusCronWorker 需求状态任务定时器
-func DemandStatusCronWorker(client *ethclient.Client, demand *models.Demand, wg *sync.WaitGroup) {
+func DemandStatusCronWorker(client *ethclient.Client, marketPlaceHost, marketPlaceApiKey string, demand *models.Demand, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
@@ -337,6 +333,10 @@ func DemandStatusCronWorker(client *ethclient.Client, demand *models.Demand, wg 
 		var err error
 		if receipt.Status == types.ReceiptStatusSuccessful {
 			err = mysql.UpdateDemandStatus(demand.DemandId, models.DemandStatusPublished)
+			if err == nil {
+				// 提交到marketplace去
+				err = PushDemandToMarketplace(demand.DemandId, marketPlaceHost, marketPlaceApiKey)
+			}
 		} else if receipt.Status == types.ReceiptStatusFailed {
 			err = mysql.UpdateDemandStatus(demand.DemandId, models.DemandStatusPublishFailed)
 		}

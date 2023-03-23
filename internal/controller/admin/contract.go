@@ -50,12 +50,15 @@ func DemandContractStatusCron() {
 		return
 	}
 
+	marketPlaceHost := viper.GetString("marketplace.host")
+	marketPlaceApiKey := viper.GetString("marketplace.api_key")
+
 	// 使用goroutine去分别执行cron worker
 	var wg sync.WaitGroup
 	for idx := range demands {
 		wg.Add(1)
 		// 执行每个需求的任务
-		go logic.DemandStatusCronWorker(client, &demands[idx], &wg)
+		go logic.DemandStatusCronWorker(client, marketPlaceHost, marketPlaceApiKey, &demands[idx], &wg)
 	}
 	wg.Wait()
 }
