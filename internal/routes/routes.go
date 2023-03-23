@@ -8,7 +8,6 @@ import (
 	"mangrove/internal/routes/middleware"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,10 +24,10 @@ func Setup(mode string) *gin.Engine {
 	r.Use(cors.New(config))
 
 	// Serve static files from the "static" directory
-	r.Use(static.Serve("/", static.LocalFile("./ui/dist", true)))
-	r.NoRoute(func(c *gin.Context) {
-		c.FileFromFS("index.html", static.LocalFile("./ui/dist", true))
-	})
+	//r.Use(static.Serve("/", static.LocalFile("./ui/dist", true)))
+	//r.NoRoute(func(c *gin.Context) {
+	//	c.FileFromFS("index.html", static.LocalFile("./ui/dist", true))
+	//})
 
 	r.GET("/ping", controller.Ping)
 
