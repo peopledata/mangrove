@@ -17,7 +17,7 @@ FROM harbor.peopledata.org.cn/htsc/public-cncp-image-base-rhel:8.6
 EXPOSE 8081
 WORKDIR /app
 COPY --from=build /go/src/app/server /app
-COPY --from=build /go/src/app/ui/dist /app/ui/dist
+#COPY --from=build /go/src/app/ui/dist /app/ui/dist
 COPY --from=build /go/src/app/start.sh /
 RUN chmod +x /start.sh
 # Entrypoint":["tini","--"]
