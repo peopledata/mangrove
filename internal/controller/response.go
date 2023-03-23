@@ -22,6 +22,7 @@ const (
 	CodeInvalidEthClient
 
 	CodeDemandCreateErr
+	CodeDemandInvalidAtErr
 	CodeDemandDetailErr
 	CodeDemandUpdateErr
 	CodeDemandNotExist
@@ -49,6 +50,7 @@ var codeMsgMap = map[ResCode]string{
 	CodeInvalidEthClient: "无效的Eth客户端",
 
 	CodeDemandCreateErr:     "新增需求失败",
+	CodeDemandInvalidAtErr:  "有效期错误",
 	CodeDemandDetailErr:     "获取需求失败",
 	CodeDemandUpdateErr:     "更新需求失败",
 	CodeDemandNotExist:      "需求不存在",

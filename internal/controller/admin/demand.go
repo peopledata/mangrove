@@ -8,6 +8,7 @@ import (
 	"mangrove/internal/schema"
 	"mangrove/pkg/converter"
 	"strconv"
+	"time"
 
 	"github.com/spf13/viper"
 
@@ -102,6 +103,14 @@ func DemandCreateHandler(c *gin.Context) {
 		return
 	}
 
+	// 设置成至少是当前时间一小时后
+	now := time.Now().Add(time.Hour)
+	if dcr.ValidAt.Second() < now.Second() {
+		zap.L().Error("DemandCreate Handler valid at lt now", zap.String("name", dcr.Name))
+		controller.ResponseErr(c, controller.CodeDemandInvalidAtErr)
+		return
+	}
+
 	user, err := controller.GetCurrentUser(c)
 	if err != nil {
 		zap.L().Error("DemandCreate Handler get current user error", zap.String("name", dcr.Name), zap.Error(err))
@@ -142,6 +151,14 @@ func DemandUpdateHandler(c *gin.Context) {
 			return
 		}
 		controller.ResponseErrWithMsg(c, controller.CodeInvalidParam, converter.RemoveTopStruct(errs.Translate(converter.Trans))) // 翻译错误信息
+		return
+	}
+
+	// 设置成至少是当前时间一小时后
+	now := time.Now().Add(time.Hour)
+	if dur.ValidAt.Second() < now.Second() {
+		zap.L().Error("DemandUpdate Handler valid at lt now", zap.String("name", dur.Name))
+		controller.ResponseErr(c, controller.CodeDemandInvalidAtErr)
 		return
 	}
 
