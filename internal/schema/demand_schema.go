@@ -3,7 +3,7 @@ package schema
 import "time"
 
 type DemandListResp struct {
-	DemandId       int64     `json:"demand_id"`
+	DemandId       string    `json:"demand_id"`
 	Name           string    `json:"name"`
 	ValidAt        time.Time `json:"valid_at"`
 	Status         int       `json:"status"`
@@ -63,11 +63,12 @@ type DemandCreateReq struct {
 	UseTimes  int       `json:"use_times" binding:"required,gt=0"`
 	Purpose   string    `json:"purpose" binding:"required"`
 	Algorithm string    `json:"algorithm" binding:"required"`
+	Command   string    `json:"command"`
 	Agreement string    `json:"agreement" binding:"required"`
 }
 
 type DemandDetailResp struct {
-	DemandId        int64     `json:"demand_id"`
+	DemandId        string    `json:"demand_id"`
 	Name            string    `json:"name"`
 	Brief           string    `json:"brief"`
 	ValidAt         time.Time `json:"valid_at"`
@@ -83,11 +84,12 @@ type DemandDetailResp struct {
 	ContractSymbol  string    `json:"contract_symbol"`
 	Purpose         string    `json:"purpose"`
 	Algorithm       string    `json:"algorithm"`
+	Command         string    `json:"command"`
 	Agreement       string    `json:"agreement"`
 }
 
 type DemandInfoResp struct {
-	DemandId  int64     `json:"demand_id"`
+	DemandId  string    `json:"demand_id"`
 	Name      string    `json:"name"`
 	Brief     string    `json:"brief"`
 	ValidAt   time.Time `json:"valid_at"`
@@ -98,11 +100,12 @@ type DemandInfoResp struct {
 	UseTimes  int       `json:"use_times"`
 	Purpose   string    `json:"purpose"`
 	Algorithm string    `json:"algorithm"`
+	Command   string    `json:"command"`
 	Agreement string    `json:"agreement"`
 }
 
 type DemandUpdateReq struct {
-	DemandId  int64     `json:"demand_id" binding:"required"`
+	DemandId  string    `json:"demand_id" binding:"required"`
 	Name      string    `json:"name"`
 	Brief     string    `json:"brief"`
 	ValidAt   time.Time `json:"valid_at"`
@@ -113,5 +116,6 @@ type DemandUpdateReq struct {
 	UseTimes  int       `json:"use_times"`
 	Purpose   string    `json:"purpose"`
 	Algorithm string    `json:"algorithm"`
+	Command   string    `json:"command"`
 	Agreement string    `json:"agreement"`
 }

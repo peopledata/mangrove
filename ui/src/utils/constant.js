@@ -39,6 +39,11 @@ export const DEMAND_STATUS_MAP = [
     color: 'processing',
   },
   {
+    value: DEMAND_STATUS.PUBLISHFAIL,
+    label: '发布失败',
+    color: 'error',
+  },
+  {
     value: DEMAND_STATUS.PUBLISHING,
     label: '发布中',
     color: 'warning',

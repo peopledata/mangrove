@@ -39,7 +39,7 @@ class AlgoList extends PureComponent {
       },
     ]
     return (
-      <Drawer {...algoListProps}>
+      <Drawer style={{ zIndex: 1250 }} {...algoListProps}>
         <Table columns={columns} simple dataSource={dataSource} />
       </Drawer>
     )

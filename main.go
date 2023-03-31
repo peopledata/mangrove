@@ -8,7 +8,7 @@ import (
 	"mangrove/internal/logger"
 	"mangrove/internal/routes"
 	"mangrove/pkg/converter"
-	"mangrove/pkg/snowflake"
+	"mangrove/pkg/id"
 	"mangrove/settings"
 	"net/http"
 	"os"
@@ -46,7 +46,7 @@ func main() {
 
 	mysql.AutoMigrate()
 
-	if err := snowflake.Init(viper.GetString("app.start_time"), viper.GetInt64("app.machine_id")); err != nil {
+	if err := id.Init(viper.GetString("app.start_time"), viper.GetInt64("app.machine_id")); err != nil {
 		fmt.Printf("init redis failed, err: %v\n", err)
 		return
 	}
@@ -56,7 +56,7 @@ func main() {
 	// 每隔15s检查一次合约状态
 	c.AddFunc("*/15 * * * *", admin.DemandContractStatusCron)
 	// 每隔5分钟
-	c.AddFunc("0 */5 * * *", admin.DemandContractRecordsCron)
+	//c.AddFunc("0 */5 * * *", admin.DemandContractRecordsCron)
 	c.Start()
 
 	// 初始化gin框架内置的validator使用的翻译器

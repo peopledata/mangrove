@@ -50,5 +50,35 @@ func TaskListHandler(c *gin.Context) {
 		return
 	}
 
-	controller.ResponseOk(c, logic.ListTasks(demandId))
+	tasks, err := logic.ListTasks(demandId)
+	if err != nil {
+		zap.L().Error("TaskList Handler logic handle error", zap.String("demand_id", demandIdStr), zap.Error(err))
+		controller.ResponseErr(c, controller.CodeTaskListErr)
+		return
+	}
+
+	controller.ResponseOk(c, tasks)
+}
+
+func TaskAlgoHandler(c *gin.Context) {
+	// 1. 获取demand id
+	taskIdstr := c.Param("id")
+	taskId, err := strconv.ParseInt(taskIdstr, 10, 64)
+	if err != nil {
+		zap.L().Error("Task Algo API Handler with invalid param", zap.String("task_id", taskIdstr), zap.Error(err))
+		controller.ResponseErr(c, controller.CodeInvalidParam)
+		return
+	}
+
+	// 2. 业务处理
+	records, err := logic.TaskAlgoRecords(taskId)
+	if err != nil {
+		zap.L().Error("Task Algo API Handler logic handle error", zap.String("task_id", taskIdstr), zap.Error(err))
+		controller.ResponseErr(c, controller.CodeAlgoRecordsErr)
+		return
+	}
+
+	controller.ResponseOk(c, gin.H{
+		"records": records,
+	})
 }

@@ -26,13 +26,13 @@ func ContractRecordsHandler(c *gin.Context) {
 		controller.ResponseErr(c, controller.CodeInvalidParam)
 		return
 	}
-
-	controller.ResponseOk(c, gin.H{
-		"page":     page,
-		"pageSize": pageSize,
-		"records":  logic.GetContractRecordsByDemandId(demandId, page, pageSize),
-		"total":    logic.TotalContractRecordsByDemandId(demandId),
-	})
+	data, err := logic.GetContractRecords(demandId, page, pageSize)
+	if err != nil {
+		zap.L().Error("DemandDetail Handler with invalid param", zap.String("id", demandIdStr), zap.Error(err))
+		controller.ResponseErr(c, controller.CodeInvalidParam)
+		return
+	}
+	controller.ResponseOk(c, data)
 }
 
 // DemandContractStatusCron 需求发布后合约部署的状态更新定时器

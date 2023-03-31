@@ -10,7 +10,7 @@ func InsertTask(task *models.Task) error {
 
 func GetAllTasksByDemandId(id int64) []models.Task {
 	var tasks []models.Task
-	db.Where("demand_id=?", id).Preload("User").Find(&tasks)
+	db.Where("demand_id=?", id).Find(&tasks)
 	return tasks
 }
 

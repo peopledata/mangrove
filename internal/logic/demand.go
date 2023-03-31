@@ -11,11 +11,10 @@ import (
 	"mangrove/internal/models"
 	"mangrove/internal/schema"
 	"mangrove/pkg/contracts"
+	"mangrove/pkg/id"
 	"mangrove/pkg/ipfs"
-	"mangrove/pkg/snowflake"
 	"math/big"
 	"net/http"
-	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -41,7 +40,7 @@ import (
 
 func CreateDemand(dcr *schema.DemandCreateReq, user *models.User) error {
 	// 2. 生成UID
-	demandId := snowflake.GenID()
+	demandId := id.GenID()
 
 	//	3. 构造一个User结构体
 	demand := models.Demand{
@@ -68,7 +67,7 @@ func ListPagerDemands(q string, page, pageSize int) []schema.DemandListResp {
 	for idx := range demands {
 		item := demands[idx]
 		demandList = append(demandList, schema.DemandListResp{
-			DemandId:       item.DemandId,
+			DemandId:       strconv.FormatInt(item.DemandId, 10),
 			Name:           item.Name,
 			ValidAt:        item.ValidAt,
 			Status:         item.Status,
@@ -159,12 +158,13 @@ func GetDemandDetail(demandId int64) (*schema.DemandDetailResp, error) {
 		return nil, err
 	}
 	return &schema.DemandDetailResp{
-		DemandId:        demand.DemandId,
+		DemandId:        strconv.FormatInt(demand.DemandId, 10),
 		Name:            demand.Name,
 		Brief:           demand.Brief,
 		ValidAt:         demand.ValidAt,
 		CreatedAt:       demand.CreatedAt,
 		Category:        demand.Category,
+		App:             demand.App,
 		Content:         demand.Content,
 		NeedUsers:       demand.NeedUsers,
 		UseTimes:        demand.UseTimes,
@@ -172,6 +172,7 @@ func GetDemandDetail(demandId int64) (*schema.DemandDetailResp, error) {
 		AvailableTimes:  demand.AvailableTimes,
 		Purpose:         demand.Purpose,
 		Algorithm:       demand.Algorithm,
+		Command:         demand.Command,
 		Agreement:       demand.Agreement,
 		ContractAddress: demand.ContractAddr,
 		ContractSymbol:  demand.ContractSymbol,
@@ -184,32 +185,40 @@ func GetDemandInfo(demandId int64) (*schema.DemandInfoResp, error) {
 		return nil, err
 	}
 	return &schema.DemandInfoResp{
-		DemandId:  demand.DemandId,
+		DemandId:  strconv.FormatInt(demand.DemandId, 10),
 		Name:      demand.Name,
 		Brief:     demand.Brief,
 		ValidAt:   demand.ValidAt,
 		Category:  demand.Category,
+		App:       demand.App,
 		Content:   demand.Content,
 		NeedUsers: demand.NeedUsers,
 		UseTimes:  demand.UseTimes,
 		Purpose:   demand.Purpose,
 		Algorithm: demand.Algorithm,
+		Command:   demand.Command,
 		Agreement: demand.Agreement,
 	}, nil
 }
 
 func UpdateDemand(dur *schema.DemandUpdateReq) error {
+	demandId, err := strconv.ParseInt(dur.DemandId, 10, 64)
+	if err != nil {
+		return err
+	}
 	demand := models.Demand{
-		DemandId:  dur.DemandId,
+		DemandId:  demandId,
 		Name:      dur.Name,
 		Brief:     dur.Brief,
 		ValidAt:   dur.ValidAt,
 		Category:  dur.Category,
+		App:       dur.App,
 		Content:   dur.Content,
 		NeedUsers: dur.NeedUsers,
 		UseTimes:  dur.UseTimes,
 		Purpose:   dur.Purpose,
 		Algorithm: dur.Algorithm,
+		Command:   dur.Command,
 		Agreement: dur.Agreement,
 	}
 	return mysql.UpdateDemand(&demand)
@@ -337,10 +346,9 @@ func DemandStatusCronWorker(client *ethclient.Client, marketPlaceHost, marketPla
 				// 提交到marketplace去
 				err = PushDemandToMarketplace(demand.DemandId, marketPlaceHost, marketPlaceApiKey)
 			}
-		} else if receipt.Status == types.ReceiptStatusFailed {
-			err = mysql.UpdateDemandStatus(demand.DemandId, models.DemandStatusPublishFailed)
 		}
-		if err != nil {
+		if err != nil || receipt.Status == types.ReceiptStatusFailed {
+			err = mysql.UpdateDemandStatus(demand.DemandId, models.DemandStatusPublishFailed)
 			zap.L().Error("Demand contract status check cron error", zap.String("reason", "update demand status error"),
 				zap.String("demand_id", demandIdstr),
 				zap.String("contract_address", demand.ContractAddr),
@@ -382,7 +390,6 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 	// todo：超过1000个分页
 	etherscanApiUrl := fmt.Sprintf("https://api-goerli.etherscan.io/api?module=account&action=tokennfttx&contractaddress=%s&page=1&offset=1000&sort=desc&apikey=%s",
 		demand.ContractAddr, etherscanApiKey)
-	proxyUrl, err := url.Parse("http://50.16.249.26:3128")
 	if err != nil {
 		zap.L().Error("Demand contract records get cron error", zap.String("reason", "parsing proxy url error"),
 			zap.Int64("demand_id", demand.DemandId),
@@ -404,9 +411,6 @@ func DemandContractRecordsCronWorker(etherscanApiKey string, client *ethclient.C
 
 	httpclient := http.Client{
 		Timeout: time.Second * 10, // 设置超时时间为10s
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(proxyUrl),
-		},
 	}
 	resp, err := httpclient.Do(req)
 	if err != nil {

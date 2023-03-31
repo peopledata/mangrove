@@ -54,6 +54,7 @@ func Setup(mode string) *gin.Engine {
 	// 任务管理
 	adminV1.POST("/demand/:id/task", middleware.JWTAuthMiddleware(), admin.TaskCreateHandler) // 触发一次新的任务
 	adminV1.GET("/demand/:id/task", middleware.JWTAuthMiddleware(), admin.TaskListHandler)    // 任务列表
+	adminV1.GET("/task/:id/algo", middleware.JWTAuthMiddleware(), admin.TaskAlgoHandler)      // 任务算法
 
 	// 外部API接口
 	apiV1 := r.Group("/api/v1")

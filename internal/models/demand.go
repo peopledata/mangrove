@@ -17,10 +17,9 @@ const (
 )
 
 type Demand struct {
-	ID       uint  `gorm:"primaryKey" json:"id"`
-	DemandId int64 `gorm:"demand_id;uniqueIndex:idx_demand_id;not null" json:"demand_id"`
-	UserId   uint  `gorm:"user_id;index;not null" json:"user_id"` // 创建需求的用户ID
-	// User           User           `gorm:"foreignKey:UserId"`
+	ID             uint           `gorm:"primaryKey" json:"id"`
+	DemandId       int64          `gorm:"demand_id;uniqueIndex:idx_demand_id;not null" json:"demand_id"`
+	UserId         uint           `gorm:"user_id;index;not null" json:"user_id"`            // 创建需求的用户ID
 	Name           string         `gorm:"type:varchar(255);not null" json:"name"`           // 需求名称
 	Brief          string         `gorm:"brief;varchar(512)" json:"brief"`                  // 简介
 	ValidAt        time.Time      `gorm:"valid_time" json:"valid_at"`                       // 需求有效期
@@ -34,6 +33,7 @@ type Demand struct {
 	AvailableTimes int            `gorm:"available_times;default:0" json:"available_times"` // 数据可用次数
 	Purpose        string         `gorm:"text;not null" json:"purpose"`                     // 数据用途
 	Algorithm      string         `gorm:"varchar(512);not null" json:"algorithm"`           // 算法文件镜像地址
+	Command        string         `gorm:"command;varchar(256)" json:"command"`              // 算法执行命令
 	Agreement      string         `gorm:"text;not null" json:"agreement"`                   // 协议内容
 	ContractToken  string         `gorm:"contract_token" json:"contract_token"`             // 合约名称：比如 PeopleDataBank
 	ContractSymbol string         `gorm:"contract_symbol" json:"contract_symbol"`           // 合约标识：比如 PDB

@@ -105,7 +105,7 @@ func DemandCreateHandler(c *gin.Context) {
 
 	// 设置成至少是当前时间一小时后
 	now := time.Now().Add(time.Hour)
-	if dcr.ValidAt.Second() < now.Second() {
+	if dcr.ValidAt.Unix() < now.Unix() {
 		zap.L().Error("DemandCreate Handler valid at lt now", zap.String("name", dcr.Name))
 		controller.ResponseErr(c, controller.CodeDemandInvalidAtErr)
 		return
@@ -131,16 +131,10 @@ func DemandCreateHandler(c *gin.Context) {
 func DemandUpdateHandler(c *gin.Context) {
 	// 1. 获取demand id
 	demandIdStr := c.Param("id")
-	demandId, err := strconv.ParseInt(demandIdStr, 10, 64)
-	if err != nil {
-		zap.L().Error("DemandUpdate Handler with invalid param", zap.String("id", demandIdStr), zap.Error(err))
-		controller.ResponseErr(c, controller.CodeInvalidParam)
-		return
-	}
 
 	// 2. 参数校验
 	var dur schema.DemandUpdateReq
-	dur.DemandId = demandId
+	dur.DemandId = demandIdStr
 	if err := c.ShouldBindJSON(&dur); err != nil {
 		zap.L().Error("DemandUpdate Handler with invalid param", zap.Error(err))
 		// 判断err是不是ValidationErrors错误，如果是则翻译下错误为中文
@@ -156,7 +150,7 @@ func DemandUpdateHandler(c *gin.Context) {
 
 	// 设置成至少是当前时间一小时后
 	now := time.Now().Add(time.Hour)
-	if dur.ValidAt.Second() < now.Second() {
+	if dur.ValidAt.Unix() < now.Unix() {
 		zap.L().Error("DemandUpdate Handler valid at lt now", zap.String("name", dur.Name))
 		controller.ResponseErr(c, controller.CodeDemandInvalidAtErr)
 		return

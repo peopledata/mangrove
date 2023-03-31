@@ -30,6 +30,9 @@ const (
 	CodeDemandPublishErr
 
 	CodeTaskCreateErr
+	CodeTaskListErr
+
+	CodeAlgoRecordsErr
 
 	CodeServerBusy
 	CodeUnknown
@@ -58,6 +61,9 @@ var codeMsgMap = map[ResCode]string{
 	CodeDemandPublishErr:    "需求发布失败",
 
 	CodeTaskCreateErr: "任务创建失败",
+	CodeTaskListErr:   "任务列表获取失败",
+
+	CodeAlgoRecordsErr: "获取算法记录失败",
 
 	CodeServerBusy: "服务繁忙",
 	CodeUnknown:    "未知错误",

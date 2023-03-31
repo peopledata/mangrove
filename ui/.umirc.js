@@ -61,11 +61,11 @@ export default {
   mock: false,
   // Webpack Configuration
   proxy: {
-    // '/admin': {
-    //   target: 'http://localhost:8081/',
-    //   changeOrigin: true,
-    //   // pathRewrite: { '^/api': '/api' },
-    // },
+    '/admin': {
+      target: 'http://localhost:8081/',
+      changeOrigin: true,
+      // pathRewrite: { '^/api': '/api' },
+    },
   },
   // Theme for antd
   // https://ant.design/docs/react/customize-theme

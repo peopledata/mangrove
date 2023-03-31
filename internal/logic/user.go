@@ -4,8 +4,8 @@ import (
 	"mangrove/internal/dao/mysql"
 	"mangrove/internal/models"
 	"mangrove/internal/schema"
+	"mangrove/pkg/id"
 	"mangrove/pkg/jwt"
-	"mangrove/pkg/snowflake"
 )
 
 func SignUp(sp *schema.SignUpReq) error {
@@ -15,7 +15,7 @@ func SignUp(sp *schema.SignUpReq) error {
 	}
 
 	// 2. 生成UID
-	userId := snowflake.GenID()
+	userId := id.GenID()
 
 	//	3. 构造一个User结构体
 	user := models.User{

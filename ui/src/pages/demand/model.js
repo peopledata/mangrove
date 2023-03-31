@@ -131,8 +131,9 @@ export default modelExtend(pageModel, {
 
     *create({ payload }, { call, put }) {
       const data = yield call(createDemand, payload)
-      if (data.success) {
+      if (data.success && data.code === CODE_SUCCESS) {
         yield put({ type: 'hideModal' })
+        yield put({ type: 'query', payload: { page: 1, pageSize: 10 } })
       } else {
         throw data
       }
@@ -153,7 +154,7 @@ export default modelExtend(pageModel, {
       const response = yield call(publishDemand, payload)
       if (response.success && response.code === CODE_SUCCESS) {
         // todo：获取payload
-        const payload = {}
+        const payload = { page: 1, pageSize: 10 }
         yield put({ type: 'query', payload: payload })
       } else {
         throw response

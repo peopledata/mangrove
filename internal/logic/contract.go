@@ -1,11 +1,52 @@
 package logic
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"mangrove/internal/dao/mysql"
 	"mangrove/internal/schema"
+	"net/http"
 	"net/url"
 	"regexp"
+	"time"
+
+	"github.com/spf13/viper"
 )
+
+func GetContractRecords(demandId int64, page, pageSize int) (*schema.RespContract, error) {
+	apiHost := viper.GetString("marketplace.host")
+	apiKey := viper.GetString("marketplace.api_key")
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/demands/%d/contract?page=%d&pageSize=%d", apiHost, demandId, page, pageSize), nil)
+	if err != nil {
+		return nil, err
+	}
+	header := http.Header{}
+	header.Add("Content-Type", "application/json")
+	header.Add("X-API-KEY", apiKey)
+	req.Header = header
+	httpclient := http.Client{
+		Timeout: time.Second * 10, // 设置超时时间为10s
+	}
+	resp, err := httpclient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var rtl schema.RespContractList
+	if err := json.Unmarshal(body, &rtl); err != nil {
+		return nil, err
+	}
+	if rtl.Code == 1000 {
+		return rtl.Data, nil
+	}
+	return nil, fmt.Errorf("get demand contract record list failed: %s", rtl.Msg)
+}
 
 func GetContractRecordsByDemandId(demandId int64, page, pageSize int) []schema.ContractRecordResp {
 	contractRecords := mysql.GetContractRecordsByDemandId(demandId, page, pageSize)

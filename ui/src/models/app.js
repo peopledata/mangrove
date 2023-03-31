@@ -12,10 +12,10 @@ import { CODE_SUCCESS } from '../utils/constant'
 
 const { queryRouteList, logoutUser, queryUserInfo } = api
 
-const goDashboard = () => {
+const goDemand = () => {
   if (pathToRegexp(['/', '/login']).exec(window.location.pathname)) {
     history.push({
-      pathname: '/dashboard',
+      pathname: '/demand',
     })
   }
 }
@@ -23,15 +23,7 @@ const goDashboard = () => {
 export default {
   namespace: 'app',
   state: {
-    routeList: [
-      {
-        id: '1',
-        icon: 'laptop',
-        name: 'Dashboard',
-        zhName: '仪表盘',
-        router: '/dashboard',
-      },
-    ],
+    routeList: [],
     locationPathname: '',
     locationQuery: {},
     theme: store.get('theme') || 'light',
@@ -72,7 +64,7 @@ export default {
       const isInit = store.get('isInit')
       console.log('query.isInit=', isInit)
       if (isInit) {
-        goDashboard()
+        goDemand()
         return
       }
       const { locationPathname } = yield select((_) => _.app)
@@ -104,7 +96,7 @@ export default {
         store.set('permissions', permissions)
         store.set('user', user)
         store.set('isInit', true)
-        goDashboard()
+        goDemand()
       } else if (queryLayout(config.layouts, locationPathname) !== 'public') {
         console.log('====push2login====')
         history.push({

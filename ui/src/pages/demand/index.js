@@ -59,7 +59,7 @@ class Demand extends PureComponent {
           type: 'demand/query',
           payload: {
             page:
-              list.length === 1 && pagination.current > 1
+              list && list.length === 1 && pagination.current > 1
                 ? pagination.current - 1
                 : pagination.current,
             pageSize: pagination.pageSize,
@@ -73,7 +73,7 @@ class Demand extends PureComponent {
           payload: {
             q: q,
             page:
-              list.length === 1 && pagination.current > 1
+              list && list.length === 1 && pagination.current > 1
                 ? pagination.current - 1
                 : pagination.current,
             pageSize: pagination.pageSize,
@@ -109,7 +109,7 @@ class Demand extends PureComponent {
             type: 'demand/query',
             payload: {
               page:
-                list.length === 1 && pagination.current > 1
+                list && list.length === 1 && pagination.current > 1
                   ? pagination.current - 1
                   : pagination.current,
               pageSize: pagination.pageSize,
@@ -199,8 +199,6 @@ class Demand extends PureComponent {
         dispatch({
           type: `demand/${modalType}`,
           payload: data,
-        }).then(() => {
-          this.handleRefresh()
         })
       },
       onCancel() {
