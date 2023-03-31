@@ -7,7 +7,8 @@ import { stringify } from 'qs'
 import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
-import Drawer from './components/Drawer'
+import TaskList from './components/TaskList'
+import AlgoList from './components/AlgoList'
 import Detail from './components/Detail'
 import ShowDetail from './components/ShowDetail'
 import { t } from '@lingui/macro'
@@ -134,7 +135,12 @@ class Demand extends PureComponent {
         })
       },
       onExecuteItem(demandId) {
-        console.log('onExecuteItem.demandId=', demandId)
+        dispatch({
+          type: 'demand/createTask',
+          payload: {
+            id: demandId,
+          },
+        })
       },
       onCloseItem(demandId) {
         console.log('onCloseItem.demandId=', demandId)
@@ -205,7 +211,7 @@ class Demand extends PureComponent {
     }
   }
 
-  get drawerProps() {
+  get taskListProps() {
     const { dispatch, demand } = this.props
     const { drawerOpen } = demand
     return {
@@ -216,6 +222,22 @@ class Demand extends PureComponent {
       onClose: () => {
         dispatch({
           type: 'demand/hideDrawer',
+        })
+      },
+    }
+  }
+
+  get algoListProps() {
+    const { dispatch, demand } = this.props
+    const { drawerAlgoListOpen } = demand
+    return {
+      title: t`Operation Record`,
+      size: 'large',
+      placement: 'right',
+      open: drawerAlgoListOpen,
+      onClose: () => {
+        dispatch({
+          type: 'demand/drawerAlgoListClose',
         })
       },
     }
@@ -284,21 +306,40 @@ class Demand extends PureComponent {
     })
   }
 
+  viewAlgoHandler = (taskId) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'demand/drawerAlgoListOpen',
+    })
+    dispatch({
+      type: 'demand/queryAlgoRecordList',
+      payload: {
+        id: taskId,
+      },
+    })
+  }
+
   render() {
     const { demand } = this.props
-    const { taskList, showDetailContent } = demand
+    const { taskList, showDetailContent, algoRecordList } = demand
 
     return (
       <Page inner>
         <Filter {...this.filterProps} />
         <List {...this.listProps} />
         <Modal {...this.modalProps} />
-        <Drawer {...this.drawerProps} dataSource={taskList} />
+        <TaskList
+          {...this.taskListProps}
+          viewAlgoHandler={this.viewAlgoHandler}
+          dataSource={taskList}
+        />
+        <AlgoList {...this.algoListProps} dataSource={algoRecordList} />
         <Detail
           {...this.detailProps}
           demand={demand}
           viewDetailHandler={this.viewDetailHandler}
           recordsTableChange={this.recordsTableChange}
+          viewAlgoHandler={this.viewAlgoHandler}
         />
         <ShowDetail {...this.showDetailProps} content={showDetailContent} />
       </Page>

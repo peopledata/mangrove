@@ -26,6 +26,7 @@ type Demand struct {
 	ValidAt        time.Time      `gorm:"valid_time" json:"valid_at"`                       // 需求有效期
 	Status         int            `gorm:"index" json:"status"`                              // 状态（草稿：1、已发布：2、已完成：3、已下架：4）
 	Category       string         `gorm:"index" json:"category"`                            // 数据分类（bank）
+	App            string         `gorm:"app;varchar(255)" json:"app"`                      // 数据所属应用
 	Content        string         `gorm:"varchar(512)" json:"content"`                      // 数据内容
 	NeedUsers      int            `gorm:"need_users" json:"need_users"`                     // 所需用户数
 	UseTimes       int            `gorm:"use_times;default:1" json:"use_times"`             // 数据使用次数

@@ -7,11 +7,11 @@ app:
   machine_id: 1
 
 mysql:
-  host: "127.0.0.1"
-  port: 3306
+  host: "43.137.15.212"
+  port: 30306
   user: "root"
-  password: "root321"
-  database: "patronus_demo"
+  password: "rootPassW0rd"
+  database: "huatai"
   max_open_conns: 100
   max_idle_conns: 10
 

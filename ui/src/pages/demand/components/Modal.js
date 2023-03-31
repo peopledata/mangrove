@@ -15,7 +15,7 @@ import {
 } from 'antd'
 import { Trans } from '@lingui/macro'
 import { t } from '@lingui/macro'
-import { DEMAND_CATEGORY_MAP } from 'utils/constant'
+import { DEMAND_CATEGORY_MAP, DEMAND_APP_MAP } from 'utils/constant'
 
 const FormItem = Form.Item
 
@@ -137,7 +137,13 @@ class DemandModal extends PureComponent {
                 hasFeedback
                 {...formItemLayout}
               >
-                <Input />
+                <Select
+                  style={{
+                    width: 120,
+                  }}
+                  placeholder={t`Select APP`}
+                  options={DEMAND_APP_MAP}
+                />
               </FormItem>
             </Col>
           </Row>
@@ -201,15 +207,29 @@ class DemandModal extends PureComponent {
             </Col>
           </Row>
 
-          <FormItem
-            name="algorithm"
-            rules={[{ required: true }]}
-            label={t`Algorithm file image address`}
-            hasFeedback
-            {...formItemLayout}
-          >
-            <Input />
-          </FormItem>
+          <Row gutter={24} style={{ marginBottom: '3rem' }}>
+            <Col span={12}>
+              <FormItem
+                name="algorithm"
+                rules={[{ required: true }]}
+                label={t`Algorithm file image address`}
+                hasFeedback
+                {...formItemLayout}
+              >
+                <Input />
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem
+                name="command"
+                label={t`Algorithm Command`}
+                hasFeedback
+                {...formItemLayout}
+              >
+                <Input />
+              </FormItem>
+            </Col>
+          </Row>
 
           <Row style={{ marginBottom: '3rem' }}>
             <Col span={22}>

@@ -25,7 +25,7 @@ func Init() (err error) {
 		viper.GetInt("mysql.port"),
 		viper.GetString("mysql.database"))
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Error),
 	})
 	if err != nil {
 		return

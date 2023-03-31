@@ -57,6 +57,7 @@ type DemandCreateReq struct {
 	ValidAt   time.Time `json:"valid_at" binding:"required"`
 	Brief     string    `json:"brief" binding:"required"`
 	Category  string    `json:"category" binding:"required"`
+	App       string    `json:"app" binding:"required"`
 	Content   string    `json:"content" binding:"required"`
 	NeedUsers int       `json:"need_users" binding:"required,gt=0"`
 	UseTimes  int       `json:"use_times" binding:"required,gt=0"`
@@ -72,6 +73,7 @@ type DemandDetailResp struct {
 	ValidAt         time.Time `json:"valid_at"`
 	CreatedAt       time.Time `json:"created_at"`
 	Category        string    `json:"category"`
+	App             string    `json:"app"`
 	Content         string    `json:"content"`
 	NeedUsers       int       `json:"need_users"`
 	UseTimes        int       `json:"use_times"`
@@ -90,6 +92,7 @@ type DemandInfoResp struct {
 	Brief     string    `json:"brief"`
 	ValidAt   time.Time `json:"valid_at"`
 	Category  string    `json:"category"`
+	App       string    `json:"app"`
 	Content   string    `json:"content"`
 	NeedUsers int       `json:"need_users"`
 	UseTimes  int       `json:"use_times"`
@@ -104,6 +107,7 @@ type DemandUpdateReq struct {
 	Brief     string    `json:"brief"`
 	ValidAt   time.Time `json:"valid_at"`
 	Category  string    `json:"category"`
+	App       string    `json:"app"`
 	Content   string    `json:"content"`
 	NeedUsers int       `json:"need_users"`
 	UseTimes  int       `json:"use_times"`

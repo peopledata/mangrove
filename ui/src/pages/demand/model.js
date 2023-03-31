@@ -8,6 +8,7 @@ import { CODE_SUCCESS } from '../../utils/constant'
 const {
   queryDemandList,
   queryTaskList,
+  createTask,
   queryContractRecords,
   queryDemandInfo,
   queryDemandDetail,
@@ -16,12 +17,15 @@ const {
   publishDemand,
   removeDemand,
   removeDemandList,
+  queryAlgoRecordList,
 } = api
 
 export default modelExtend(pageModel, {
   namespace: 'demand',
 
   state: {
+    algoRecordList: [],
+    drawerAlgoListOpen: false,
     taskList: [],
     contractRecords: [],
     contractRecordsPager: {
@@ -166,6 +170,15 @@ export default modelExtend(pageModel, {
       }
     },
 
+    *createTask({ payload }, { call, put }) {
+      const data = yield call(createTask, payload)
+      if (data.success) {
+        // yield put({ type: 'hideModal' })
+      } else {
+        throw data
+      }
+    },
+
     // 用于显示详情页数据
     *queryDetail({ payload = {} }, { call, put }) {
       // 用于编辑更新的回填
@@ -198,6 +211,22 @@ export default modelExtend(pageModel, {
               pageSize: Number(payload.pageSize) || 10,
               total: total,
             },
+          },
+        })
+      } else {
+        throw response
+      }
+    },
+
+    // 查询算法记录
+    *queryAlgoRecordList({ payload = {} }, { call, put }) {
+      const response = yield call(queryAlgoRecordList, payload)
+      if (response.success && response.code === CODE_SUCCESS && response.data) {
+        const { records } = response.data
+        yield put({
+          type: 'updateState',
+          payload: {
+            algoRecordList: records,
           },
         })
       } else {
@@ -237,6 +266,14 @@ export default modelExtend(pageModel, {
 
     drawerShowDetailClose(state) {
       return { ...state, drawerShowDetail: false }
+    },
+
+    drawerAlgoListOpen(state, { payload }) {
+      return { ...state, ...payload, drawerAlgoListOpen: true }
+    },
+
+    drawerAlgoListClose(state) {
+      return { ...state, drawerAlgoListOpen: false }
     },
   },
 })

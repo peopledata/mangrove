@@ -5,9 +5,9 @@ import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import { getTaskStatusLabel, getTaskStatusColor } from 'utils/constant'
 
-class DemandDrawer extends PureComponent {
+class TaskList extends PureComponent {
   render() {
-    const { onOk, dataSource, ...drawerProps } = this.props
+    const { onOk, dataSource, viewAlgoHandler, ...taskListProps } = this.props
     const columns = [
       {
         title: <Trans>Index</Trans>,
@@ -41,21 +41,30 @@ class DemandDrawer extends PureComponent {
         title: <Trans>Operation</Trans>,
         key: 'operation',
         fixed: 'right',
-        width: '15%',
+        width: '20%',
+        render: (text, record) => (
+          <a
+            onClick={() => {
+              viewAlgoHandler(record.task_id)
+            }}
+          >
+            查看运行结果
+          </a>
+        ),
       },
     ]
 
     return (
-      <Drawer {...drawerProps}>
+      <Drawer {...taskListProps}>
         <Table columns={columns} simple dataSource={dataSource} />
       </Drawer>
     )
   }
 }
 
-DemandDrawer.propTypes = {
+TaskList.propTypes = {
   item: PropTypes.object,
   onOk: PropTypes.func,
 }
 
-export default DemandDrawer
+export default TaskList

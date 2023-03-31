@@ -72,6 +72,11 @@ export const DEMAND_CATEGORY = {
   TELECOM: 'telecom',
 }
 
+export const DEMAND_APP = {
+  WEBANK: 'webank',
+  JD: 'jd',
+}
+
 export const DEMAND_CATEGORY_MAP = [
   {
     value: DEMAND_CATEGORY.BANK,
@@ -126,4 +131,20 @@ export const getTaskStatusLabel = (status) => {
 export const getTaskStatusColor = (status) => {
   const item = TASK_STATUS_MAP.find((item) => item.value === status)
   return item ? item.color : 'default'
+}
+
+export const DEMAND_APP_MAP = [
+  {
+    value: DEMAND_APP.WEBANK,
+    label: '微众银行',
+  },
+  {
+    value: DEMAND_APP.JD,
+    label: '京东',
+  },
+]
+
+export const getDemandAppLabel = (category) => {
+  const item = DEMAND_APP_MAP.find((item) => item.value === category)
+  return item ? item.label : category
 }

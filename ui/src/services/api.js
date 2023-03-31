@@ -23,6 +23,8 @@ export default {
   removeDemandList: 'POST /demands/delete',
 
   queryTaskList: '/demand/:id/task',
+  createTask: 'POST /demand/:id/task',
+  queryAlgoRecordList: '/task/:id/algo',
 
   queryDashboard: '/dashboard',
 }

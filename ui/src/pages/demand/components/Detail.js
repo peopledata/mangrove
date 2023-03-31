@@ -223,7 +223,8 @@ class DemandDetail extends PureComponent {
   }
 
   renderTasks = () => {
-    const { demand } = this.props
+    const self = this
+    const { demand, viewAlgoHandler } = self.props
     const { taskList } = demand
     const columns = [
       {
@@ -258,7 +259,16 @@ class DemandDetail extends PureComponent {
         title: <Trans>Operation</Trans>,
         key: 'operation',
         fixed: 'right',
-        width: '15%',
+        width: '20%',
+        render: (text, record) => (
+          <a
+            onClick={() => {
+              viewAlgoHandler(record.task_id)
+            }}
+          >
+            查看运行结果
+          </a>
+        ),
       },
     ]
     return <Table columns={columns} simple dataSource={taskList} />
