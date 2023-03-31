@@ -131,7 +131,7 @@ class DemandModal extends PureComponent {
             </Col>
             <Col span={12}>
               <FormItem
-                name="content"
+                name="app"
                 rules={[{ required: true }]}
                 label={t`Data Content`}
                 hasFeedback
