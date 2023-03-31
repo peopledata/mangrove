@@ -58,7 +58,7 @@ type DemandCreateReq struct {
 	Brief     string    `json:"brief" binding:"required"`
 	Category  string    `json:"category" binding:"required"`
 	App       string    `json:"app" binding:"required"`
-	Content   string    `json:"content" binding:"required"`
+	Content   string    `json:"content"`
 	NeedUsers int       `json:"need_users" binding:"required,gt=0"`
 	UseTimes  int       `json:"use_times" binding:"required,gt=0"`
 	Purpose   string    `json:"purpose" binding:"required"`
